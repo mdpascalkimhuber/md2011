@@ -2,6 +2,7 @@
 #define _WORLD_LC_HPP
 
 #include "world.hpp"
+#include "cell.hpp"
 
 
 /**

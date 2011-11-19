@@ -16,7 +16,7 @@ public:
      *
      * @return potential energy
      */
-    virtual real force(Particle &p, Particle &q) = 0;
+  virtual real force(Particle &p, Particle &q) = 0;
 };
 
 #endif // _POTENTIAL_HPP
