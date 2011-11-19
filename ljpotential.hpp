@@ -19,6 +19,7 @@ public:
    * @return potential energy
    */
   virtual real force(Particle &p, Particle &q);
+
 };
 
 #endif _LENNARDJONESPOTENTIAL_HPP

@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   ljpotential Pot;
 
   // create World
-  World W;
+  World W(2.5);
 
   // read Parameters
   W.read_Parameter(argv[1]);
@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
   // print World configuration
   std::cout << W << std::endl;
 
+  // print particles 
   std::vector<Particle>::iterator it = W.particles.begin(); 
   while (it != W.particles.end())
     {

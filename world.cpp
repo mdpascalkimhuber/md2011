@@ -8,6 +8,11 @@ World::World() : name("unknown"),t(0),delta_t(0),t_end(0),e_kin(0),e_pot(0),e_to
   // empty constructor
 }
 
+World::World(real r_cut) : name ("unknown"),t(0),delta_t(0),t_end(0),e_kin(0),e_pot(0),e_tot(0), cell_r_cut(r_cut)
+{
+  // empty constructor
+}
+
 void World::read_Parameter(const std::string &filename)
 {
   // create input filestream

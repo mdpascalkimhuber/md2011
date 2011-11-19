@@ -14,6 +14,8 @@
 class World {
 public:
   World();
+  
+  World(real r_cut); 
 
   /**
    * @brief read the world parameters from the given parameter file
@@ -63,7 +65,7 @@ public:
   real world_size[DIM]; 
   /// bordertype as DIM x 2 matrice
   BorderType borders[DIM][2];
-  /// r_cut for cut potentials
+  /// r_cut
   real cell_r_cut; 
 }; 
 
