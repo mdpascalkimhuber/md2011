@@ -32,7 +32,7 @@ public:
    *
    * @param filename filename of the particles file
    */
-  virtual void read_particles(const std::string &filename); 
+  virtual void read_Particles(const std::string &filename); 
 
   /// additional data structure for linked cell
   // cells
@@ -43,6 +43,6 @@ public:
   real cell_length[DIM];
   // r_cut used for calculation of the cell length
   real cell_r_cut; 
-}
+};
 
 #endif _WORLD_LC_HPP

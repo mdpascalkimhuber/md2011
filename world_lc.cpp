@@ -15,7 +15,7 @@ void World_LC::read_Parameter(const std::string &filename)
   // create input filestream to open file again
   std::ifstream parfile(filename.c_str()); 
   // check if file is open
-  if (!parfile.is_open())
+  if (!parfile.is_open()) 
     throw std::runtime_error(
 			     "read_Parameter(): Can't open file '" + filename + "' for reading."
 			     ); 
@@ -44,4 +44,3 @@ void World_LC::read_Parameter(const std::string &filename)
   // close file
   parfile.close(); 
 };
-  
