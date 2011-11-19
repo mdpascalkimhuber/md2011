@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   ljpotential Pot;
 
   // create World
-  World W; 
+  World_LC W; 
 
   // read Parameters
   W.read_Parameter(argv[1]);

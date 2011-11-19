@@ -2,6 +2,7 @@
 #define _TIMEDISCRETIZATION_HPP
 
 #include "world.hpp"
+#include "world_lc.hpp"
 #include "potential.hpp"
 #include "observer.hpp"
 #include <iostream>

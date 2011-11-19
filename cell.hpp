@@ -17,6 +17,6 @@ public:
   real cell_size[DIM];
   /// number of particles in cell
   unsigned cell_particles; 
-}
+};
 
 #endif _CELL_HPP_
