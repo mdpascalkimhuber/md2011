@@ -34,9 +34,8 @@ public:
    * parameter file example
    * \code
    * 
-   * m 1
-   * x 0 0 
-   * v 0 0 
+   * id m x1 x2 x3 v1 v2 v3 
+   *
    * \endcode
    *
    * @param filename filename of the particle data file
@@ -64,6 +63,8 @@ public:
   real world_size[DIM]; 
   /// bordertype as DIM x 2 matrice
   BorderType borders[DIM][2];
+  /// r_cut for cut potentials
+  real cell_r_cut; 
 }; 
 
 /**
