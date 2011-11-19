@@ -3,12 +3,7 @@
 #include <sstream>
 #include <iostream>
 
-World::World() : name("unknown"),t(0),delta_t(0),t_end(0),e_kin(0),e_pot(0),e_tot(0), cell_r_cut(0)
-{
-  // empty constructor
-}
-
-World::World(real r_cut) : name ("unknown"),t(0),delta_t(0),t_end(0),e_kin(0),e_pot(0),e_tot(0), cell_r_cut(r_cut)
+World::World() : name("unknown"),t(0),delta_t(0),t_end(0),e_kin(0),e_pot(0),e_tot(0)
 {
   // empty constructor
 }
