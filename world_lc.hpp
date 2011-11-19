@@ -21,7 +21,7 @@ public:
    *
    * @param filename filename of the parameter file
    */
-  virtual read_Parameter(const std::string &filename);
+  virtual void read_Parameter(const std::string &filename);
 
   /**
    * @brief read the particles from given particles file
@@ -31,7 +31,7 @@ public:
    *
    * @param filename filename of the particles file
    */
-  virtual read_Particles(const std::string &filename); 
+  virtual void read_particles(const std::string &filename); 
 
   /// additional data structure for linked cell
   // cells
