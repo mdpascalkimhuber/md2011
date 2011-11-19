@@ -1,5 +1,5 @@
-#ifndef _CELL_HPP
-#define _CELL_HPP
+#ifndef _CELL_HPP_
+#define _CELL_HPP_
 
 #include "particle.hpp"
 
@@ -19,4 +19,4 @@ public:
   unsigned cell_particles; 
 }
 
-#endif _CELL_HPP
+#endif _CELL_HPP_
