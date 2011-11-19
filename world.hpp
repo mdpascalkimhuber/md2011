@@ -65,8 +65,6 @@ public:
   real world_size[DIM]; 
   /// bordertype as DIM x 2 matrice
   BorderType borders[DIM][2];
-  /// r_cut
-  real cell_r_cut; 
 }; 
 
 /**
