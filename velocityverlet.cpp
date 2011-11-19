@@ -1,4 +1,5 @@
 #include "velocityverlet.hpp"
+#include <math.h>
 
 // constructor1
 VelocityVerlet::VelocityVerlet(World& _W, Potential& _Pot, Observer& _O) : TimeDiscretization(_W,_Pot,_O)
@@ -46,8 +47,9 @@ void VelocityVerlet::timestep(real delta_t)
   // update velocities of all particles and calculate E_kin on the fly
   update_V();
 
-  // handle borders
-  handle_borders(); 
+  // handle borders (this function doesnt exist anymore, but must be
+  // written in update_X)
+  // handle_borders(); 
 
   // calculate E_tot
   W.e_tot = W.e_kin + W.e_pot;
@@ -70,10 +72,12 @@ void VelocityVerlet::comp_F()
     {
       // initialize iterator of particle 2 for while-loop
       itparticle2 = W.particles.begin(); 
+
       // initialize all forces with 0
       for (unsigned dim = 0; dim < DIM; dim++) {
 	itparticle1->F[dim] = 0;
       }
+
       // calculate force of particle2 acting on particle1
       while (itparticle2 != W.particles.end())
 	{
@@ -138,68 +142,20 @@ void VelocityVerlet::update_X()
     }
 }
 
-// handle borders
-void VelocityVerlet::handle_borders()
+// calculate distance between to particles p and q
+real VelocityVerlet::distance(Particle &p, Particle &q)
 {
-  // initialize particle_iterator
-  std::vector<Particle>::iterator itparticle = W.particles.begin(); 
+  // initialize variable 
+  real distance = 0; 
   
-  // check all particles 
-  while ( itparticle != W.particles.end() )
-    {
-      // check each dimension of particle
-      for ( unsigned dim = 0; dim < DIM; dim++)
-	{
-	  // check lower_border
-	  if ( itparticle->x[dim] < 0.0)
-	    {
-	      // check border type for actual border
-	      switch ( W.borders[dim][0] )
-		{ // border_type "unknown"
-		case unknown:
-		  {
-		    std::cout << "Lower border (" 
-			      << dim << ")x(" << 1
-			      << ") is unknown." << std::endl; 
-		    itparticle++; // nothing to do, so go to next particle
-		    break; 
-		  } // border_type "leaving"
-		case leaving:
-		  { // kill particle and notify
-		    itparticle = W.particles.erase(itparticle); 
-		    std::cout << "Particle " << (itparticle-1)->id 
-			      << " left this world." << std::endl; 
-		    break; 
-		  }
-		}
-	    }
-	  // check upper_border
-	  else if ( itparticle->x[dim] > W.world_size[dim] )
-	    {
-	      // check border type for actual border
-	      switch ( W.borders[dim][1] )
-		{ // border_type "unknown"
-		case unknown: 
-		  {
-		    std::cout << "Upper border ("
-			      << dim << ")x(" << 2
-			      << ") is unknown." << std::endl; 
-		    itparticle++; // nothing to do, so go to next particle
-		    break; 
-		  } // border_type "leaving"
-		case leaving: 
-		  { // kill particle and notify
-		    itparticle = W.particles.erase(itparticle); 
-		    std::cout << "Particle " << (itparticle-1)->id
-			      << " left this world." << std::endl;
-		    break; 
-		  }
-		}
-	    }
-	  else // particle still in world, go to next particle
-	    if ( dim == (DIM-1) ) itparticle++; 
-	}
-    }
+  // calculate distance^2
+  for (unsigned dim = 0; dim < DIM; dim++) {
+    distance += sqr(q.x[dim]-p.x[dim]);    
+  }
+  
+  // return square root of distance^2
+  return sqrt(distance);  
 }
+
 	  
 // vim:set et sts=4 ts=4 sw=4 ai ci cin:

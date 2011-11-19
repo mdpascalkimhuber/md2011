@@ -55,8 +55,11 @@ public:
    * @brief calculate the new position of all particles according to their velocity
    */
   virtual void update_X();
-  
-  virtual void handle_borders(); 
+
+  /**
+   * @brief calculate the distance between two particles p and q
+   */
+  virtual real distance(Particle &p, Particle &q); 
 
 protected:
   // data structures inherited from TimeDiscretization
