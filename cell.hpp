@@ -12,9 +12,7 @@ public:
   /// The cell contains particles ...
   std::vector<Particle> particles; 
   /// position of the cell
-  unsigned cell_pos;
-  /// size of the cell
-  real cell_size[DIM];
+  unsigned cell_pos[DIM];
   /// number of particles in cell
   unsigned cell_particles; 
 };
