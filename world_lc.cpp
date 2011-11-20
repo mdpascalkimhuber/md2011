@@ -63,5 +63,12 @@ void World_LC::read_Parameter(const std::string &filename)
     }
 
   // Adding the right number of cells to world 
-  //  for (unsigned x1 = 0; x1 < cell_
+  /// calculating total number of cells
+  unsigned cell_N_tot = 1; 
+  for ( unsigned dim = 0; dim < DIM; dim++)
+    {
+      cell_N_tot *= cell_N[dim];
+    }
+  /// resize the cell_vector
+  cells.resize(cell_N_tot); 
   };

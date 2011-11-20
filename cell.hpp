@@ -7,7 +7,7 @@
 class Cell 
 {
 public: 
-
+  
   // data structure
   /// The cell contains particles ...
   std::vector<Particle> particles; 
