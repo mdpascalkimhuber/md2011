@@ -26,7 +26,7 @@ void World_LC::read_Parameter(const std::string &filename)
   std::string line, option; 
   
   // set postion of the get pointer in order to avoid to miss data
-  parfile.seekg(ios_base::beg); 
+  parfile.seekg(std::ios_base::beg); 
 
   // read file till eof
     while ( parfile.good())
@@ -59,10 +59,9 @@ void World_LC::read_Parameter(const std::string &filename)
   for (unsigned dim = 0; dim < DIM; dim++)
     {
       // l^{cell}_i = \frac{l^{world}_i}{n^{cell}_i}
-      cell_length[dim] = double(world_size[dim]/cell_N);
-
+      cell_length[dim] = world_size[dim]/real(cell_N[dim]);
     }
 
   // Adding the right number of cells to world 
-  for (unsigned x1 = 0; x1 < cell_
+  //  for (unsigned x1 = 0; x1 < cell_
   };
