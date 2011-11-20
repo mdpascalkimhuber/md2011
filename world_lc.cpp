@@ -43,4 +43,18 @@ void World_LC::read_Parameter(const std::string &filename)
 
   // close file
   parfile.close(); 
-};
+
+  // calculating number of cells with length of world and cell_c_cut
+  for (unsigned dim = 0; dim < DIM; dim++) 
+    {
+      // calculate number of cells: the typecast allows a cell
+      // length inferior to cell_r_cut
+      cell_N[dim] = int(world_size[dim]/cell_r_cut); 
+    }
+  
+  // calculate length of cells with cell_N
+  for (unsigned dim = 0; dim < DIM; dim++)
+    {
+      // l^{cell}_i = \frac{l^{world}_i}{n^{cell}_i}
+      cell_length[dim] = double(world_size[dim]/cell_N)
+  };
