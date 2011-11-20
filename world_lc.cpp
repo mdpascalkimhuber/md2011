@@ -1,6 +1,9 @@
 #include "world_lc.hpp"
+#include <stdexcept>
+#include <sstream>
+#include <iostream>
 
-World_LC::World_LC() : World(), cell_N(0), cell_length(0), cell_r_cut(0)
+World_LC::World_LC() : World(), cell_r_cut(0)
 {
   // empty constructor
 }; 
@@ -56,5 +59,10 @@ void World_LC::read_Parameter(const std::string &filename)
   for (unsigned dim = 0; dim < DIM; dim++)
     {
       // l^{cell}_i = \frac{l^{world}_i}{n^{cell}_i}
-      cell_length[dim] = double(world_size[dim]/cell_N)
+      cell_length[dim] = double(world_size[dim]/cell_N);
+
+    }
+
+  // Adding the right number of cells to world 
+  for (unsigned x1 = 0; x1 < cell_
   };
