@@ -18,11 +18,11 @@ unsigned World_LC::comp_cell_index(unsigned dim, real pos[DIM])
 }; 
 
 // calculate the position of a cell ont the basis of the given index
-unsigned comp_cell_pos(unsigned dim, real& cell_pos[DIM])
+unsigned World_LC::comp_cell_pos(unsigned dim, real cell_pos[DIM], unsigned index)
 {
   if (dim < DIM-1) {
     // recursive calling
-    unsigned var = comp_cell_pos(dim+1); 
+    unsigned var = comp_cell_pos(dim+1, cell_pos, index);
     
     // calculate cell_position using only coordinates, that are
     // already calculated 
@@ -32,7 +32,7 @@ unsigned comp_cell_pos(unsigned dim, real& cell_pos[DIM])
 
   // break condition 
   cell_pos[dim] = (index % cell_N[dim])*cell_length[dim]; 
-  return ((index-cell_pos[dim])/cell_length[dim])/cell_n[dim]; 
+  return ((index-cell_pos[dim])/cell_length[dim])/cell_N[dim]; 
 }; 
 
 
