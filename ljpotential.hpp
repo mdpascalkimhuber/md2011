@@ -14,12 +14,11 @@ public:
    * the Lennard-Jones-Potential and add it to p
    *
    * @param p particle p
-   * @param q particl q
+   * @param q particle q
    *
    * @return potential energy
    */
   virtual real force(Particle &p, Particle &q);
-
 };
 
 #endif _LENNARDJONESPOTENTIAL_HPP

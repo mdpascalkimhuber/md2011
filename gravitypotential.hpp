@@ -12,7 +12,7 @@ public:
      * @brief calculate the gravitational force between the two particles and add it to p
      *
      * @param p particle p
-     * @param q particl q
+     * @param q particle q
      *
      * @return potential energy
      */

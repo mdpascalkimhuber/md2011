@@ -3,6 +3,7 @@
 #include <cstdio>
 
 #include "world.hpp"
+#include "world_lc.hpp"
 #include "gravitypotential.hpp"
 #include "ljpotential.hpp"
 #include "velocityverlet.hpp"
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
   ljpotential Pot;
 
   // create World
-  World W(2.5);
+  World_LC W; 
 
   // read Parameters
   W.read_Parameter(argv[1]);

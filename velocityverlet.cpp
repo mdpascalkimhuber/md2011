@@ -84,7 +84,7 @@ void VelocityVerlet::comp_F()
 	  if(itparticle1 != itparticle2) // no force by the particle itself
 	    {
 	      // comparing distance to r_cut
-	      if (distance(*itparticle1, *itparticle2) < W.cell_r_cut )
+	      if (distance(*itparticle1, *itparticle2) < W.r_cut )
 		{
 		  // Add force by particle2 and calculate  E_{pot} = E_{pot} * 1/2*V_{1,2}
 		  W.e_pot += 0.5*Pot.force(*itparticle1, *itparticle2);
