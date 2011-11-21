@@ -8,6 +8,16 @@ World_LC::World_LC() : World(), cell_r_cut(0)
   // empty constructor
 }; 
 
+
+// calculate the index of a cell with the coordinates
+// this is a recursive function
+unsigned World_LC::comp_cell_index(unsigned dim, real pos[DIM]) 
+{
+  if (dim > 0) return (unsigned(pos[dim]/cell_length[dim]) + cell_N[dim]*comp_cell_index(dim-1, pos));
+  return unsigned(pos[dim]/cell_length[dim]); 
+}; 
+
+
 // derived read_Parameter: call original read_Parameter and open file
 // again
 void World_LC::read_Parameter(const std::string &filename) 

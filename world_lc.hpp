@@ -35,6 +35,13 @@ public:
    */
   virtual void read_Particles(const std::string &filename); 
 
+  /**
+   * @brief calculate the index of the cell on the basis of cartesian
+   * coordinates
+   */
+  unsigned comp_cell_index(unsigned dim, real pos[DIM]); 
+
+
   /// additional data structure for linked cell
   // cells
   std::vector<Cell> cells; 
