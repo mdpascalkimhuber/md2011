@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     
   // print World configuration
   std::cout << W << std::endl;
-
+  
   // print particles 
   std::vector<Particle>::iterator it = W.particles.begin(); 
   while (it != W.particles.end())

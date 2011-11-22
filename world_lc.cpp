@@ -41,7 +41,7 @@ unsigned World_LC::comp_cell_pos(unsigned dim, real cell_pos[DIM], unsigned inde
 void World_LC::read_Parameter(const std::string &filename) 
 {
   // call original member function to read basic parameters
-  read_Parameter(filename); 
+  World::read_Parameter(filename); 
   
   // create input filestream to open file again
   std::ifstream parfile(filename.c_str()); 
@@ -57,7 +57,7 @@ void World_LC::read_Parameter(const std::string &filename)
   parfile.seekg(std::ios_base::beg); 
 
   // read file till eof
-    while ( parfile.good())
+  while ( parfile.good())
     {
       // read line from file
       getline(parfile, line); 
@@ -70,12 +70,12 @@ void World_LC::read_Parameter(const std::string &filename)
       // check option and read values
       if (option=="cell_r_cut")
 	strstr >> cell_r_cut; 
-    }
+	}
 
   // close file
   parfile.close(); 
 
-  // calculating number of cells with length of world and cell_c_cut
+  // calculating number of cells with length of world and cell_r_cut
   for (unsigned dim = 0; dim < DIM; dim++) 
     {
       // calculate number of cells: the typecast allows a cell
@@ -87,7 +87,7 @@ void World_LC::read_Parameter(const std::string &filename)
   for (unsigned dim = 0; dim < DIM; dim++)
     {
       // l^{cell}_i = \frac{l^{world}_i}{n^{cell}_i}
-      cell_length[dim] = world_size[dim]/real(cell_N[dim]);
+      cell_length[dim] = world_size[dim]/real(cell_N[dim]); 
     }
 
   // Adding the right number of cells to world 
@@ -99,4 +99,23 @@ void World_LC::read_Parameter(const std::string &filename)
     }
   /// resize the cell_vector
   cells.resize(cell_N_tot); 
-  };
+  
+};
+
+std::ostream& operator << (std::ostream& os, World_LC& W) {
+  os << "t=" << W.t << " delta_t=" << W.delta_t << " t_end=" << W.t_end
+     << " Number of Particles=" << W.particles.size()
+     << " cell_r_cut=" << W.cell_r_cut
+     << " Number of cells=" << W.cells.size() << std::endl; 
+  
+  // give out number of cells in every dimension
+  for (unsigned dim = 0; dim < DIM; dim++)
+    os << "Cell_N[" << dim << "]=" << W.cell_N[dim] << " "; 
+  os << std::endl; 
+
+  // give out the length of cells in every dimension
+  for (unsigned dim = 0; dim < DIM; dim++)
+    os << "Cell_length[" << dim << "]=" << W.cell_length[dim] << " "; 
+
+  return os;
+}
