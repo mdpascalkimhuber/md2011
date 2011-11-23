@@ -16,6 +16,7 @@ unsigned World_LC::comp_cell_index(unsigned dim, real pos[DIM])
 {
   // if dim !=0 make a recursive calling
   if (dim > 0) return (unsigned(pos[DIM-dim]/cell_length[DIM-dim]) + cell_N[DIM-dim]*comp_cell_index(dim-1, pos));
+  // break condition for recursion
   return unsigned(pos[DIM-dim]/cell_length[DIM-dim]); 
 }; 
 
@@ -102,6 +103,11 @@ void World_LC::read_Parameter(const std::string &filename)
     }
   /// resize the cell_vector
   cells.resize(cell_N_tot); 
+  
+  for ( unsigned index = 0; index < cells.size(); index++)
+    {
+      cells[index].id = index; 
+    }
 };
 
 
@@ -124,13 +130,14 @@ void World_LC::read_Particles(const std::string &filename)
   // distribute particles while particles-vector not empty
   while (itparticle != particles.end())
     {
+      // calculate the index of the right cell 
       index = comp_cell_index(DIM, itparticle->x); 
-      std::cout << "Der Index ist : " << index << std::endl; 
-
+      
+      // add particle to particles-vector in the right cell
       cells[index].particles.push_back(particles.front()); 
+      // delete particle in world_particles-vector
       itparticle = particles.erase(itparticle); 
     }
-
 }
 
 

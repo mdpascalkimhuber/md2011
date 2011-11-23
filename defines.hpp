@@ -6,7 +6,7 @@
  *
  * \subsection algorithms_subsec Implementierte Verfahren und deren Klassen
  *
- * - ljpotential: das (skalierte) Lennard-Jones-Potential \f$U(r_{ij})
+ * - ljpotential das (skalierte) Lennard-Jones-Potential \f$U(r_{ij})
  * = -4\varepsilon \cdot \left( \frac{\sigma}{r_{ij}} \right)^6 \cdot
  * \left( \left( \frac{\sigma}{r_{ij}} \right)^6 -1 \right)\f$
  * - VelocityVerlet mit \f$O(N^2)\f$ Kraftberechnungen
