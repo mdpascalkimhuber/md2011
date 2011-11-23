@@ -68,5 +68,5 @@ private:
   VelocityVerlet();
 };
 
-#endif _VELOCITYVERLET_HPP
+#endif //_VELOCITYVERLET_HPP
 // vim:set et sts=4 ts=4 sw=4 ai ci cin:
