@@ -33,7 +33,7 @@ public:
    *
    * @param filename filename of the particles file
    */
-  //  virtual void read_Particles(const std::string &filename); 
+ virtual void read_Particles(const std::string &filename); 
 
   /**
    * @brief calculate the index of the cell on the basis of cartesian
@@ -58,15 +58,5 @@ public:
   // r_cut used for calculation of the cell length
   real cell_r_cut; 
 };
-
-/**
- * @brief a ostream operator for the World_LC class
- *
- * @param os stream object
- * @param W the world_lc
- *
- * @return resulting stream object
- */
-std::ostream& operator << (std::ostream& os, World_LC& W);
 
 #endif _WORLD_LC_HPP
