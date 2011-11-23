@@ -150,6 +150,6 @@ std::ostream& operator << (std::ostream& os, World_LC& W) {
   // give out number of cells in every dimension
   for (unsigned dim = 0; dim < DIM; dim++)
     os << "Cell_N[" << dim << "]=" << W.cell_N[dim] << " "; 
-  os << std::endl; 
+  return os << std::endl; 
 };
 
