@@ -47,10 +47,6 @@ void VelocityVerlet::timestep(real delta_t)
   // update velocities of all particles and calculate E_kin on the fly
   update_V();
 
-  // handle borders (this function doesnt exist anymore, but must be
-  // written in update_X)
-  // handle_borders(); 
-
   // calculate E_tot
   W.e_tot = W.e_kin + W.e_pot;
 }

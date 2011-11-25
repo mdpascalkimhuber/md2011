@@ -22,12 +22,12 @@ public:
    *
    * @param delta_t length of the timestep
    */
-  //  virtual void timestep(real delta_t);
+  virtual void timestep(real delta_t);
 
   /**
    * @brief run the simulation
    */
-  //  virtual void simulate();
+  virtual void simulate();
 
   /**
    * @brief calculate the distance between two particles p and q
@@ -79,11 +79,6 @@ public:
    */
   virtual void update_X();
 
-  /**
-   * @brief calculate the distance between two particles p and q
-   */
-  //virtual real distance(Particle &p, Particle &q); 
-  
 protected:
   // data structures inherited from TimeDiscretization
   /// linked_cell world 

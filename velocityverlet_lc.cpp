@@ -7,9 +7,44 @@ VelocityVerlet_LC::VelocityVerlet_LC(World_LC& _W, Potential& _Pot, Observer &_O
   // empty constructor
 }
 
-// calculate all forces affecting the particles in one specific cell
-// of the world
-//void VelocityVerlet_LC::F_comp_in(Cell& C)
+
+// makes simulation
+void VelocityVerlet_LC::simulate()
+{
+  // calculate forces for t=0
+  comp_F(); 
+  
+  // write start values O.notify(); 
+  
+  // while simulation end time not reached 
+  while (W_LC.t < W_LC.t_end)
+    {
+      // make a timestep
+      timestep(W_LC.delta_t); 
+      // notify observer
+      O.notify(); 
+    }
+}
+
+
+// make one timestep in the simulation
+void VelocityVerlet_LC::timestep(real delta_t)
+{
+  // increase time
+  W_LC.t += delta_t; 
+
+  // update coordinates of all particles
+  update_X(); 
+
+  // calculate all forces and E_pot on the fly
+  comp_F(); 
+  
+  // update velocities of all particles and calculate E_kin on the fly
+  update_V(); 
+
+  // calculate E_tot
+  W_LC.e_tot = W_LC.e_kin + W_LC.e_pot; 
+}
 
 
 // calculate distance between to particles p and q
