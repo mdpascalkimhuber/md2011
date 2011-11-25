@@ -30,10 +30,23 @@ public:
   //  virtual void simulate();
 
   /**
+   * @brief calculate the distance between two particles p and q
+   */
+  virtual real distance(Particle &p, Particle &q); 
+
+  /**
+   * @brief calculate the forces with origin in Cell D affecting the
+   * particles in Cell C
+   * 
+   * @param Cell C, Cell D
+   *
+   */
+  virtual void comp_F_between(Cell& C, Cell& D); 
+  /**
    * @brief calculate the forces affecting the particles at the
    * current time in one specific cell
    */
-  //virtual void comp_F_in(Cell& C); 
+  virtual void comp_F_in(Cell& C); 
 
   /**
    * @brief calculates the forces affecting the particles at the current time
@@ -53,8 +66,8 @@ public:
   /**
    * @brief calculate the distance between two particles p and q
    */
-  //  virtual real distance(Particle &p, Particle &q); 
-
+  //virtual real distance(Particle &p, Particle &q); 
+  
 protected:
   // data structures inherited from TimeDiscretization
   /// linked_cell world 

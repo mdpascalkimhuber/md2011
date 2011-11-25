@@ -23,7 +23,8 @@ unsigned World_LC::comp_cell_index(unsigned dim, real pos[DIM])
 // index. WORKS ONLY IN 3 DIMENSIONS
 void World_LC::comp_cell_pos(Cell& C)
 {
-  // calculate the position the cell in dimension 1, 2, 3
+  // calculate the position the cell in dimension 1, 2, 3 and save it
+  // in cell_pos
   C.cell_pos[2] = (cell_length[2]*(C.id % cell_N[2])); 
   C.cell_pos[1] = (cell_length[1]*(unsigned((C.id - C.cell_pos[2]/cell_length[2])/cell_N[2]) % cell_N[1])); 
   C.cell_pos[0] = (cell_length[0]*(((C.id - C.cell_pos[2]/cell_length[2])/cell_N[2])-(C.cell_pos[1]/cell_length[1]))/cell_N[1]); 
