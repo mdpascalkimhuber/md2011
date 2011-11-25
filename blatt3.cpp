@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     {
       cout << W.cells[index]; 
     }
-  
+ 
   // create the Observer
   ObserverXYZ O(W);
 

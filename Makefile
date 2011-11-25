@@ -9,7 +9,7 @@
 MAIN = blatt3
 
 # define the C source files
-SRCS = blatt3.cpp world.cpp timediscretization.cpp gravitypotential.cpp velocityverlet.cpp observer.cpp particle.cpp ljpotential.cpp observerxyz.cpp world_lc.cpp cell.cpp velocityverlet_lc.cpp
+SRCS = blatt3.cpp world.cpp timediscretization.cpp gravitypotential.cpp velocityverlet.cpp observer.cpp particle.cpp ljpotential.cpp observerxyz.cpp world_lc.cpp cell.cpp velocityverlet_lc.cpp potential.cpp
 
 # define the C compiler to use
 CC = g++

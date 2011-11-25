@@ -22,7 +22,6 @@ Observer::Observer(World &_W) : W(_W)
 // destructor
 Observer::~Observer()
 {
-  std::cout << "~Observer" << std::endl; 
   // close the statistics file
   if ( statistics.is_open() )
     statistics.close();

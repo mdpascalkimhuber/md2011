@@ -33,7 +33,7 @@ public:
    * @brief calculate the forces affecting the particles at the
    * current time in one specific cell
    */
-  virtual void comp_F_in(Cell& C); 
+  //virtual void comp_F_in(Cell& C); 
 
   /**
    * @brief calculates the forces affecting the particles at the current time
