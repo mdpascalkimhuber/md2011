@@ -266,14 +266,20 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
     }
 }
 
+// update all positions of all particles in every cell of entire world
+void VelocityVerlet_LC::update_X()
+{
+  // initialize iterator for cell vector
+  std::vector<Cell>::iterator cell = W_LC.cells.begin(); 
 
+  while (cell != W_LC.cells.end())
+    {
+      // update all coordinates of the actual cell
+      update_X_in(*cell); 
 
+      // increment cell iterator for while loop
+      cell++; 
+    }
+}
 
-// update_X_in(Cell &C) 1. while (all particles) { for (all
-// dimensions) { update_X; set F_old to F; set F = 0; set v = 0; } if
-// ( x1 nicht im gebiet ) {border handling: leaving -> bool, unknown
-// -> cout, periodic -> shift} if (x2 nicht im Gebiet) {border
-// handling} if (x3 nicht im Gebiet) {border handling} if (bool =
-// leaving) {throw out} else {calculate index and put in the right
-// cell}
 
