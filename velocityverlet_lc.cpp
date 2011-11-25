@@ -112,3 +112,25 @@ void VelocityVerlet_LC::comp_F_in(Cell &C)
     }
 }
 
+// calculate all forces of all particles: call comp_F_in for all Cells
+// in World_LC
+void VelocityVerlet_LC::comp_F()
+{
+  // initialize iterator for cell-vector
+  std::vector<Cell>::iterator cell = W_LC.cells.begin(); 
+  
+  // initialize E_pot with zero
+  W_LC.e_pot = 0; 
+
+  // calculate forces for every cell
+  while ( cell != W_LC.cells.end())
+    {
+      comp_F_in(*cell); 
+    }
+}
+
+// update velocities of all particles in one Cell C
+void VelocityVerlet_LC::update_V_in(Cell &C)
+{
+  
+}
