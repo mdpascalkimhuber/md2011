@@ -66,6 +66,15 @@ public:
   virtual void update_V();
 
   /**
+   * @brief calculate the positions of the particles in one Cell C and
+   * handle borders. 
+   *
+   * @param Cell C
+   *
+   */
+  virtual void update_X_in(Cell &C); 
+
+  /**
    * @brief calculate the new position of all particles according to their velocity
    */
   //  virtual void update_X();

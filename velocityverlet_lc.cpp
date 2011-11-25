@@ -169,6 +169,106 @@ void VelocityVerlet_LC::update_V()
     }
 }
 
+
+// update position of all particles in cell C
+void VelocityVerlet_LC::update_X_in(Cell &C) 
+{
+  // initialize iterator for particles vector
+  std::vector<Particle>::iterator p_cell = C.particles.begin();
+
+  while (p_cell != C.particles.end())
+    {
+      for ( unsigned dim = 0; dim < DIM; dim++)
+	{
+	  // update coordinate of particle by formula $ x = x + \delta_t v + \frac{F \delta_t}{2 m} $
+          p_cell->x[dim] = p_cell->x[dim] + W_LC.delta_t * (p_cell->v[dim] + ((0.5 / p_cell->m) * p_cell->F[dim] * W_LC.delta_t));
+	  
+	  // update F_old
+	  p_cell->F_old[dim] = p_cell->F[dim]; 
+
+	  // delete p_cell->F and p_cell->v: so that particle can't be
+	  // moved again at timestep when found in an other cell
+	  p_cell->F[dim] = 0.0; 
+	  p_cell->v[dim] = 0.0; 
+	}
+      
+      // til now, new positions have been calculated, next step ist
+      // border_handling and cell index managing; this will only work
+      // in THREE DIMENSIONS
+
+      // initialize bool variable to handle border_type leaving
+      bool is_leaving = false; 
+      
+      // check if particle is still in world, if not handle with it! 
+      for ( unsigned dim = 0; dim < DIM; dim++) // checking al dimensions
+	{
+	  if ( p_cell->x[dim] < 0) // lower border
+	    { 
+	      // border handling: check which border_type
+	      switch (W_LC.borders[dim][0])
+		{
+		case unknown : // nothing to do MAYBE STOP SIMULATION
+		  {
+		    std::cout << "Border (" << dim << ", " << 0 
+			      << ") is unknown. Don't know what to do!" << std::endl;  
+		  }
+		case leaving : // particle left the world (so say a prayer)
+		  {
+		    is_leaving = true; 
+		  }
+		case periodic : // particle left the world and joins on
+				// the other side
+		  {
+		    // MUST BE WRITTEN 
+		  }
+		}
+	    }
+	  if ( p_cell->x[dim] > W_LC.world_size[dim]) // upper border
+	    {
+	      // border handling: check which border_type
+	      switch (W_LC.borders[dim][1]) 
+		{
+		case unknown : // nothing to do MAYBE STOP SIMULATION
+		  {
+		    std::cout << "Border (" << dim << ", " << 0 
+			      << ") is unknown. Don't know what to do!" << std::endl;  
+		  }
+		case leaving : // particle left the world (so say a prayer)
+		  {
+		    is_leaving = true; 
+		  }
+		case periodic : // particle left the world and joins
+				// on the other side
+		  {
+		    // MUST BE WRITTEN 
+		  }
+		}
+	    }
+	}
+      if ( is_leaving) // if particle left this world, destroy it!
+	{
+	  // Hasta la vista! Iterator points on next particle in
+	  // vector (if it existis)
+	  p_cell = C.particles.erase(p_cell); 
+	}
+      else 
+	{
+	  // particle is still in world, so update cell index and put
+	  // particle in right cell
+	  W_LC.cells[W_LC.comp_cell_index(DIM, p_cell->x)].particles.push_back(*p_cell); 
+	}
+      
+      // increment iterator (if still possible)
+      if (p_cell != C.particles.end())
+	{
+	  p_cell++; 
+	}
+    }
+}
+
+
+
+
 // update_X_in(Cell &C) 1. while (all particles) { for (all
 // dimensions) { update_X; set F_old to F; set F = 0; set v = 0; } if
 // ( x1 nicht im gebiet ) {border handling: leaving -> bool, unknown
@@ -177,7 +277,3 @@ void VelocityVerlet_LC::update_V()
 // leaving) {throw out} else {calculate index and put in the right
 // cell}
 
-// update position of all particles in cell C
-void VelocityVerlet_LC::update_X_in(Cell &C) 
-{
-  
