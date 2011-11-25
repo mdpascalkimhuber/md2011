@@ -7,6 +7,7 @@
 #include "gravitypotential.hpp"
 #include "ljpotential.hpp"
 #include "velocityverlet.hpp"
+#include "velocityverlet_lc.hpp"
 #include "observer.hpp"
 #include "observerxyz.hpp"
 
@@ -47,10 +48,16 @@ int main(int argc, char *argv[]) {
   ObserverXYZ O(W);
 
   // instanciate timediscretization 
-  VelocityVerlet Verlet(W, Pot, O);
+  VelocityVerlet_LC Verlet(W, Pot, O);
 
   // run the simulation
   Verlet.simulate();
+
+  // print Cell configuration 
+  for ( unsigned index = 0; index < W.cells.size(); index++)
+    {
+      cout << W.cells[index]; 
+    }
 
   return EXIT_SUCCESS;
 }

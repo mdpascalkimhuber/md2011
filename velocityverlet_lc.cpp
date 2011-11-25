@@ -30,6 +30,7 @@ void VelocityVerlet_LC::simulate()
 // make one timestep in the simulation
 void VelocityVerlet_LC::timestep(real delta_t)
 {
+  std::cout << "Making a timestep" << std::endl; 
   // increase time
   W_LC.t += delta_t; 
 
@@ -114,6 +115,7 @@ void VelocityVerlet_LC::comp_F_in(Cell &C)
       // for all three dimensions
       for ( unsigned dim = 0; dim < DIM; dim++)
 	p_cell->F[dim] = 0; 
+      p_cell++;
     }
 
   // three for loops (for each dimension) to get all neighbour cells
@@ -161,6 +163,7 @@ void VelocityVerlet_LC::comp_F()
   while ( cell != W_LC.cells.end())
     {
       comp_F_in(*cell); 
+      cell++;
     }
 }
 
@@ -215,6 +218,7 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
     {
       for ( unsigned dim = 0; dim < DIM; dim++)
 	{
+	  //	  std::cout << "update_X_in calculate position." << std::endl; 
 	  // update coordinate of particle by formula $ x = x + \delta_t v + \frac{F \delta_t}{2 m} $
           p_cell->x[dim] = p_cell->x[dim] + W_LC.delta_t * (p_cell->v[dim] + ((0.5 / p_cell->m) * p_cell->F[dim] * W_LC.delta_t));
 	  
@@ -226,7 +230,7 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 	  p_cell->F[dim] = 0.0; 
 	  p_cell->v[dim] = 0.0; 
 	}
-      
+
       // til now, new positions have been calculated, next step ist
       // border_handling and cell index managing; this will only work
       // in THREE DIMENSIONS
@@ -282,6 +286,7 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 	}
       if ( is_leaving) // if particle left this world, destroy it!
 	{
+	  std::cout << "Hasta la vista!" << std::endl; 
 	  // Hasta la vista! Iterator points on next particle in
 	  // vector (if it existis)
 	  p_cell = C.particles.erase(p_cell); 
@@ -290,7 +295,12 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 	{
 	  // particle is still in world, so update cell index and put
 	  // particle in right cell
-	  W_LC.cells[W_LC.comp_cell_index(DIM, p_cell->x)].particles.push_back(*p_cell); 
+	  if ( C.id != W_LC.comp_cell_index(DIM, p_cell->x))
+	    {
+	      std::cout << *p_cell << std::endl;
+	      W_LC.cells[W_LC.comp_cell_index(DIM, p_cell->x)].particles.push_back(*p_cell); 
+	      p_cell = C.particles.erase(p_cell); 
+	    }
 	}
       
       // increment iterator (if still possible)
