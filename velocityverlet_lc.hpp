@@ -54,6 +54,13 @@ public:
   virtual void comp_F();
 
   /**
+   * @brief calculates the new velocities of the particles in Cell C
+   *
+   * @param Cell C
+   */
+  virtual void update_V_in(Cell &C); 
+
+  /**
    * @brief calculates the new velocity of the particles
    */
   virtual void update_V();

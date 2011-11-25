@@ -132,5 +132,39 @@ void VelocityVerlet_LC::comp_F()
 // update velocities of all particles in one Cell C
 void VelocityVerlet_LC::update_V_in(Cell &C)
 {
-  
+  // initialize iterator 
+  std::vector<Particle>::iterator p_cell = C.particles.begin(); 
+
+  // update all velocities and calculate E_kin
+  while (p_cell != C.particles.end())
+    {
+      // for all dimensions
+      for ( unsigned dim = 0; dim < DIM; dim++)
+	{
+	  // update velocity of particle by formula $ v = v + \delta_t \frac{F+F_{old}}{2m} $
+	  p_cell->v[dim] = p_cell->v[dim] + (W_LC.delta_t * (0.5 / p_cell->m) * (p_cell->F[dim] + p_cell->F_old[dim])); 
+	  
+	  // update E_{kin} = frac{m}{2} * v^2
+	  W_LC.e_kin += 0.5 * p_cell->m * sqr(p_cell->v[dim]);
+	}
+      // increment iterator for while-loop
+      p_cell++;
+    }
+  // std::cout << "update_V_in: updated cell no. " << C.id <<  std::endl; 
+}
+
+// update all velocities in every cell C
+void VelocityVerlet_LC::update_V()
+{
+  // initialize iterator for cell vector
+  std::vector<Cell>::iterator cell = W_LC.cells.begin(); 
+
+  // initialize E_kin with 0
+  W_LC.e_kin = 0; 
+
+  while ( cell != W_LC.cells.end())
+    {
+      update_V_in(*cell); 
+      cell++; 
+    }
 }
