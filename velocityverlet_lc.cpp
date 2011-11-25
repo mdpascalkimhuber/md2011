@@ -66,6 +66,49 @@ void VelocityVerlet_LC::comp_F_between(Cell& C, Cell& D)
 // calculate forces of particles in neighbour cells of Cell C
 void VelocityVerlet_LC::comp_F_in(Cell &C)
 {
-  // empty
+  // helper variable for coordinates of neighbour cell
+  real coordinates[DIM]; 
+  real x[DIM]; 
+
+  // helper iterator for particle vector in Cell C
+  std::vector<Particle>::iterator p_cell = C.particles.begin(); 
+
+  // initialize all Forces of all particles in Cell C
+  while ( p_cell != C.particles.end())
+    {
+      // for all three dimensions
+      for ( unsigned dim = 0; dim < DIM; dim++)
+	p_cell->F[dim] = 0; 
+    }
+
+  // three for loops (for each dimension) to get all neighbour cells
+  for (x[0] = -1; x[0] < 2; x[0]++) // dimension 1
+    {
+      for (x[1] = -1; x[1] < 2; x[1]++) // dimension 2
+	{
+	  for (x[2] = -1; x[2] < 2; x[2]++) // dimension 3
+	    {
+	      // three if-conditions to check, if neighbour cells exists
+	      if ( (0 <= C.cell_pos[0]+x[0]) && (C.cell_pos[0]+x[0] <= W_LC.world_size[0]-W_LC.cell_length[0])) // dimension 1
+		{
+		  if ( (0 <= C.cell_pos[1]+x[1]) && (C.cell_pos[1]+x[1] <= W_LC.world_size[1]-W_LC.cell_length[1])) // dimension 2
+		    {
+		      if ( (0 <= C.cell_pos[2]+x[2]) && (C.cell_pos[2]+x[2] <= W_LC.world_size[2]-W_LC.cell_length[2])) // dimension 3
+			{
+			  // calculate all coordinates of neighbour
+			  // cell and save them in helper variable
+			  for (unsigned dim = 0; dim < DIM; dim++)
+			    {
+			      coordinates[dim] = C.cell_pos[dim]+x[dim]; 
+			    }
+			  // calculate the forces acting on particles
+			  // in Cell C from actual neighbour cell
+			  comp_F_between(C, W_LC.cells[W_LC.comp_cell_index(DIM, coordinates)]); 
+			}
+		    }
+		}
+	    }
+	}
+    }
 }
 
