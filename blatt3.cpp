@@ -7,6 +7,7 @@
 #include "gravitypotential.hpp"
 #include "ljpotential.hpp"
 #include "velocityverlet.hpp"
+#include "velocityverlet_lc.hpp"
 #include "observer.hpp"
 #include "observerxyz.hpp"
 
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
   }
 
   // instantiate Potential
-  ljpotential Pot;
+  ljpotential Pot(2.5);
 
   // create World
   World_LC W; 
@@ -36,23 +37,28 @@ int main(int argc, char *argv[]) {
     
   // print World configuration
   std::cout << W << std::endl;
-  
-  // print particles 
-  std::vector<Particle>::iterator it = W.particles.begin(); 
-  while (it != W.particles.end())
+
+  // print Cell configuration 
+  for ( unsigned index = 0; index < W.cells.size(); index++)
     {
-      std::cout << *it << std::endl; 
-      it++;
+      cout << W.cells[index]; 
     }
-    
-    // create the Observer
+
+  //  std::cout << W.cells[0].particles[0] << std::endl;  
+  // create the Observer
   ObserverXYZ O(W);
 
   // instanciate timediscretization 
-  VelocityVerlet Verlet(W, Pot, O);
+  VelocityVerlet_LC Verlet(W, Pot, O);
 
   // run the simulation
   Verlet.simulate();
+
+  // print Cell configuration 
+  for ( unsigned index = 0; index < W.cells.size(); index++)
+    {
+      cout << W.cells[index]; 
+    }
 
   return EXIT_SUCCESS;
 }

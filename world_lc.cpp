@@ -14,27 +14,26 @@ World_LC::World_LC() : World(), cell_r_cut(0)
 // this is a recursive function
 unsigned World_LC::comp_cell_index(unsigned dim, real pos[DIM]) 
 {
-  if (dim > 0) return (unsigned(pos[dim]/cell_length[dim]) + cell_N[dim]*comp_cell_index(dim-1, pos));
-  return unsigned(pos[dim]/cell_length[dim]); 
+  unsigned index = 0; 
+  index = unsigned(pos[2]/cell_length[2]) + cell_N[2]* (unsigned(pos[1]/cell_length[1]) + (cell_N[1]*(unsigned(pos[0]/cell_length[0])))); 
+  return index; 
 }; 
 
+<<<<<<< HEAD
+// calculate the position of a cell ont the basis of the given
+// index. WORKS ONLY IN 3 DIMENSIONS
+void World_LC::comp_cell_pos(Cell& C)
+=======
 // calculate the position of a cell ont the basis of the given index,
 // this is a recursive function
 unsigned World_LC::comp_cell_pos(unsigned dim, real cell_pos[DIM], unsigned index)
+>>>>>>> class_cell
 {
-  if (dim < DIM-1) {
-    // recursive calling
-    unsigned var = comp_cell_pos(dim+1, cell_pos, index);
-    
-    // calculate cell_position using only coordinates, that are
-    // already calculated 
-    cell_pos[dim] = (var % cell_N[dim])*cell_length[dim]; 
-    return (var - cell_pos[dim]/cell_length[dim])/cell_N[dim]; 
-  }
-
-  // break condition 
-  cell_pos[dim] = (index % cell_N[dim])*cell_length[dim]; 
-  return ((index-cell_pos[dim])/cell_length[dim])/cell_N[dim]; 
+  // calculate the position the cell in dimension 1, 2, 3 and save it
+  // in cell_pos
+  C.cell_pos[2] = (cell_length[2]*(C.id % cell_N[2])); 
+  C.cell_pos[1] = (cell_length[1]*(unsigned((C.id - C.cell_pos[2]/cell_length[2])/cell_N[2]) % cell_N[1])); 
+  C.cell_pos[0] = (cell_length[0]*(((C.id - C.cell_pos[2]/cell_length[2])/cell_N[2])-(C.cell_pos[1]/cell_length[1]))/cell_N[1]); 
 }; 
 
 
@@ -101,8 +100,63 @@ void World_LC::read_Parameter(const std::string &filename)
     }
   /// resize the cell_vector
   cells.resize(cell_N_tot); 
+<<<<<<< HEAD
+  
+  for ( unsigned index = 0; index < cells.size(); index++)
+    {
+      cells[index].id = index; 
+      comp_cell_pos(cells[index]); 
+    }
+};
+
+
+// derived read_Parameters: call the original member function and
+// distribute all particles over the cells 
+void World_LC::read_Particles(const std::string &filename)
+{
+  // call original read_Parameter of the basis class World
+  World::read_Particles(filename); 
+  
+  // delete all particles of the particles-vector and put them in the
+  // right cells
+   
+  // helper variable
+  unsigned index; 
+  
+  // helper iterator for particle-vector
+  std::vector<Particle>::iterator itparticle = particles.begin(); 
+  
+  // distribute particles while particles-vector not empty
+  while (itparticle != particles.end())
+    {
+
+      // calculate the index of the right cell 
+      std::cout << "calculate the index of right cell" << std::endl; 
+      index = comp_cell_index(DIM, itparticle->x); 
+
+      // add particle to particles-vector in the right cell
+      cells[index].particles.push_back(particles.front()); 
+      std::cout << "put particle" << std::endl;       
+      // delete particle in world_particles-vector
+      itparticle = particles.erase(itparticle); 
+    }
+}
+
+
+std::ostream& operator << (std::ostream& os, World_LC& W) {
+  os << "t=" << W.t << " delta_t=" << W.delta_t << " t_end=" << W.t_end
+     << " Number of Particles=" << W.particles.size()
+     << " cell_r_cut=" << W.cell_r_cut
+     << " Number of cells=" << W.cells.size() << std::endl; 
+  
+  // give out number of cells in every dimension
+  for (unsigned dim = 0; dim < DIM; dim++)
+    os << "Cell_N[" << dim << "]=" << W.cell_N[dim] << " "; 
+  os << std::endl; 
+=======
   };
 
+>>>>>>> class_cell
 
 // derived read_Parameters: call the original member function and
 // distribute all particles over the cells 

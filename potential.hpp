@@ -8,15 +8,33 @@
  */
 class Potential {
 public:
-    /**
-     * @brief calculate the force between the two particles and add it to p
-     *
-     * @param p particle p
-     * @param q particl q
-     *
-     * @return potential energy
-     */
-    virtual real force(Particle &p, Particle &q) = 0;
+  /**
+   * @brief constructor for the Potential class
+   *
+   */
+  Potential(); 
+
+  /**
+   * @brief constructor 2 for the Potential class
+   *
+   * @param r_cut
+   * 
+   */
+  Potential(real r_cut); 
+   
+  /**
+   * @brief calculate the force between the two particles and add it to p
+   *
+   * @param p particle p
+   * @param q particl q
+   *
+   * @return potential energy
+   */
+  virtual real force(Particle &p, Particle &q) = 0;
+
+  // data structure
+  /// r_cut 
+  real r_cut; 
 };
 
 #endif // _POTENTIAL_HPP

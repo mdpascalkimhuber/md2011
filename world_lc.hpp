@@ -39,13 +39,13 @@ public:
    * @brief calculate the index of the cell on the basis of cartesian
    * coordinates
    */
-  unsigned comp_cell_index(unsigned dim, real pos[DIM]);
+  virtual unsigned comp_cell_index(unsigned dim, real pos[DIM]);
 
   /*
    * @brief calculate the position in cartesian coordinates of the
    * given cell on the basis of the index in the cell_vector
    */
-  unsigned comp_cell_pos(unsigned dim, real cell_pos[DIM], unsigned index); 
+  virtual void comp_cell_pos(Cell& C); 
 
 
   /// additional data structure for linked cell
