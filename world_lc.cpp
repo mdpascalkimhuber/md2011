@@ -19,15 +19,10 @@ unsigned World_LC::comp_cell_index(unsigned dim, real pos[DIM])
   return index; 
 }; 
 
-<<<<<<< HEAD
+
 // calculate the position of a cell ont the basis of the given
 // index. WORKS ONLY IN 3 DIMENSIONS
 void World_LC::comp_cell_pos(Cell& C)
-=======
-// calculate the position of a cell ont the basis of the given index,
-// this is a recursive function
-unsigned World_LC::comp_cell_pos(unsigned dim, real cell_pos[DIM], unsigned index)
->>>>>>> class_cell
 {
   // calculate the position the cell in dimension 1, 2, 3 and save it
   // in cell_pos
@@ -100,7 +95,6 @@ void World_LC::read_Parameter(const std::string &filename)
     }
   /// resize the cell_vector
   cells.resize(cell_N_tot); 
-<<<<<<< HEAD
   
   for ( unsigned index = 0; index < cells.size(); index++)
     {
@@ -152,35 +146,7 @@ std::ostream& operator << (std::ostream& os, World_LC& W) {
   // give out number of cells in every dimension
   for (unsigned dim = 0; dim < DIM; dim++)
     os << "Cell_N[" << dim << "]=" << W.cell_N[dim] << " "; 
-  os << std::endl; 
-=======
-  };
+  return os << std::endl; 
+};
 
->>>>>>> class_cell
 
-// derived read_Parameters: call the original member function and
-// distribute all particles over the cells 
-void World_LC::read_Particles(const std::string &filename)
-{
-  // call original read_Parameter of the basis class World
-  World::read_Particles(filename); 
-  
-  // delete all particles of the particles-vector and put them in the
-  // right cells
-   
-  // helper variable
-  unsigned index; 
-  
-  // helper iterator for particle-vector
-  std::vector<Particle>::iterator itparticle = particles.begin(); 
-  
-  // distribute particles while particles-vector not empty
-  while (itparticle != particles.end())
-    {
-      index = comp_cell_index(DIM, itparticle->x); 
-      cells[index].particles.push_back(particles.front()); 
-      std::cout << "Der Index ist : " << index << std::endl; 
-      itparticle = particles.erase(itparticle); 
-    }
-
-}
