@@ -57,6 +57,8 @@ public:
   real e_pot;
   /// total energy
   real e_tot;
+  /// number of particles
+  real particles_N; 
   /// Vector of particles
   std::vector<Particle> particles;
   /// size of world (length in all dimensions)

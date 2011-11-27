@@ -128,6 +128,7 @@ void World::read_Particles(const std::string &filename)
       particles.push_back(new_particle);
       }
     }
+  particles_N = particles.size(); 
   // close file
   parfile.close(); 
 }

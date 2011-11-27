@@ -31,20 +31,19 @@ public:
    */
   virtual void notify();
 
-  /** 
-   * @brief output statistics like kinetic, potential and total energy
+  /**
+   * @brief output the coordinates of all particles of one specific
+   * cell C in xyz_format
+   * 
+   * @param Cell &C
+   *
    */
-  virtual void output_statistics();
-
-  /** 
-   * @brief output the coordinates of the particles
-   */
-  virtual void output_coordinates();
+  virtual void output_xyz_in(Cell &C); 
  
   /**
    * @brief output coordinates of the particles in xyz_file
    */
-  virtual void output_xyz(); 
+  //  virtual void output_xyz(); 
 
 protected: 
   // World_LC

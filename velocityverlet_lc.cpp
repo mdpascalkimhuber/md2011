@@ -300,6 +300,7 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 	  // Hasta la vista! Iterator points on next particle in
 	  // vector (if it existis)
 	  p_cell = C.particles.erase(p_cell); 
+	  W_LC.particles_N--; 
 	}
       else 
 	{
