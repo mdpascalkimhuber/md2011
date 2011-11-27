@@ -34,7 +34,7 @@ public:
    * @param filename filename of the particles file
    */
   virtual void read_Particles(const std::string &filename); 
-  
+
   /**
    * @brief calculate the index of the cell on the basis of cartesian
    * coordinates
@@ -45,7 +45,7 @@ public:
    * @brief calculate the position in cartesian coordinates of the
    * given cell on the basis of the index in the cell_vector
    */
-  virtual unsigned comp_cell_pos(unsigned dim, real cell_pos[DIM], unsigned index); 
+  virtual void comp_cell_pos(Cell& C); 
 
 
   /// additional data structure for linked cell

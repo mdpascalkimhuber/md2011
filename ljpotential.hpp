@@ -10,6 +10,20 @@
 class ljpotential : public Potential {
 public:
   /**
+   * @brief first constructor
+   *
+   */
+  ljpotential(); 
+
+  /**
+   * @brief second constructor with argument r_cut
+   *
+   * @param r_cut
+   *
+   */
+  ljpotential(real r_cut); 
+
+  /**
    * @brief calculate the force between the two particles defined by
    * the Lennard-Jones-Potential and add it to p
    *

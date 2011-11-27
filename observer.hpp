@@ -34,12 +34,12 @@ public:
   /** 
    * @brief output statistics like kinetic, potential and total energy
    */
-  void output_statistics();
+  virtual void output_statistics();
 
   /** 
    * @brief output the coordinates of the particles
    */
-  void output_coordinates();
+  virtual void output_coordinates();
 
 protected:
   /// The world we are observing

@@ -47,10 +47,6 @@ void VelocityVerlet::timestep(real delta_t)
   // update velocities of all particles and calculate E_kin on the fly
   update_V();
 
-  // handle borders (this function doesnt exist anymore, but must be
-  // written in update_X)
-  // handle_borders(); 
-
   // calculate E_tot
   W.e_tot = W.e_kin + W.e_pot;
 }
@@ -84,7 +80,7 @@ void VelocityVerlet::comp_F()
 	  if(itparticle1 != itparticle2) // no force by the particle itself
 	    {
 	      // comparing distance to r_cut
-	      if (distance(*itparticle1, *itparticle2) < W.r_cut )
+	      if (distance(*itparticle1, *itparticle2) < Pot.r_cut)
 		{
 		  // Add force by particle2 and calculate  E_{pot} = E_{pot} * 1/2*V_{1,2}
 		  W.e_pot += 0.5*Pot.force(*itparticle1, *itparticle2);

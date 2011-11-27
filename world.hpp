@@ -15,9 +15,7 @@ class World {
 public:
   World();
   
-  World(real r_cut); 
-
-  /**
+    /**
    * @brief read the world parameters from the given parameter file
    *
    * parameter file example

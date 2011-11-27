@@ -1,6 +1,20 @@
 #include "ljpotential.hpp"
 #include <math.h>
 
+// first constructor (r_cut = infinity)
+ljpotential::ljpotential() : Potential()
+{
+  // empty constructor
+}
+
+// second constructor with argument r_cut
+ljpotential::ljpotential(real r_cut) : Potential(r_cut)
+{
+  // empty constructor
+}
+
+// calculate the force between p and q with the Lennard-Jones
+// Potential 
 real ljpotential::force(Particle &p, Particle &q)
 {
   // free parameters \sigma end \varepsilon
