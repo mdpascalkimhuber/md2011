@@ -59,14 +59,4 @@ public:
   real cell_r_cut; 
 };
 
-/**
- * @brief a ostream operator for the World_LC class
- *
- * @param os stream object
- * @param W the world_lc
- *
- * @return resulting stream object
- */
-std::ostream& operator << (std::ostream& os, World_LC& W);
-
 #endif _WORLD_LC_HPP
