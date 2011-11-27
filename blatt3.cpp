@@ -43,7 +43,8 @@ int main(int argc, char *argv[]) {
     {
       cout << W.cells[index]; 
     }
- 
+
+  //  std::cout << W.cells[0].particles[0] << std::endl;  
   // create the Observer
   ObserverXYZ O(W);
 

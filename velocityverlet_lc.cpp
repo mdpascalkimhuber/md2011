@@ -11,6 +11,9 @@ VelocityVerlet_LC::VelocityVerlet_LC(World_LC& _W, Potential& _Pot, Observer &_O
 // makes simulation
 void VelocityVerlet_LC::simulate()
 {
+  // For debugging purposes.
+  // std::cout << "start simulation" << std::endl; 
+
   // calculate forces for t=0
   comp_F(); 
   
@@ -30,7 +33,9 @@ void VelocityVerlet_LC::simulate()
 // make one timestep in the simulation
 void VelocityVerlet_LC::timestep(real delta_t)
 {
-  std::cout << "Making a timestep" << std::endl; 
+  // For debugging purposes:
+  //std::cout << "Making a timestep" << std::endl; 
+
   // increase time
   W_LC.t += delta_t; 
 
@@ -194,9 +199,12 @@ void VelocityVerlet_LC::update_V_in(Cell &C)
 // update all velocities in every cell C
 void VelocityVerlet_LC::update_V()
 {
+  // For debugging purposes
+  // std::cout << "update_V start" << std::endl; 
+
   // initialize iterator for cell vector
   std::vector<Cell>::iterator cell = W_LC.cells.begin(); 
-
+  
   // initialize E_kin with 0
   W_LC.e_kin = 0; 
 
@@ -211,25 +219,25 @@ void VelocityVerlet_LC::update_V()
 // update position of all particles in cell C
 void VelocityVerlet_LC::update_X_in(Cell &C) 
 {
+  // For debugging purposes:
+  // std::cout << "update_X_in start with cell no" << C.id << std::endl; 
+
   // initialize iterator for particles vector
   std::vector<Particle>::iterator p_cell = C.particles.begin();
-
+  
   while (p_cell != C.particles.end())
     {
       for ( unsigned dim = 0; dim < DIM; dim++)
 	{
-	  //	  std::cout << "update_X_in calculate position." << std::endl; 
+
 	  // update coordinate of particle by formula $ x = x + \delta_t v + \frac{F \delta_t}{2 m} $
           p_cell->x[dim] = p_cell->x[dim] + W_LC.delta_t * (p_cell->v[dim] + ((0.5 / p_cell->m) * p_cell->F[dim] * W_LC.delta_t));
 	  
 	  // update F_old
 	  p_cell->F_old[dim] = p_cell->F[dim]; 
-
-	  // delete p_cell->F and p_cell->v: so that particle can't be
-	  // moved again at timestep when found in an other cell
-	  p_cell->F[dim] = 0.0; 
-	  p_cell->v[dim] = 0.0; 
 	}
+      // For debugging purposes
+      // std::cout << "Cell no. " << C.id << *p_cell << std::endl; 
 
       // til now, new positions have been calculated, next step ist
       // border_handling and cell index managing; this will only work
@@ -286,7 +294,9 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 	}
       if ( is_leaving) // if particle left this world, destroy it!
 	{
-	  std::cout << "Hasta la vista!" << std::endl; 
+	  // For debbuging purposes
+	  // std::cout << "Hasta la vista!" << std::endl; 
+
 	  // Hasta la vista! Iterator points on next particle in
 	  // vector (if it existis)
 	  p_cell = C.particles.erase(p_cell); 
@@ -294,11 +304,12 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
       else 
 	{
 	  // particle is still in world, so update cell index and put
-	  // particle in right cell
+	  // particle in particle vector of the World_LC class
 	  if ( C.id != W_LC.comp_cell_index(DIM, p_cell->x))
 	    {
-	      std::cout << *p_cell << std::endl;
-	      W_LC.cells[W_LC.comp_cell_index(DIM, p_cell->x)].particles.push_back(*p_cell); 
+    	      // put particle in particles vector of World_LC (memory)
+	      W_LC.particles.push_back(*p_cell); 
+	      // erase particle from current cell
 	      p_cell = C.particles.erase(p_cell); 
 	    }
 	}
@@ -314,6 +325,9 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 // update all positions of all particles in every cell of entire world
 void VelocityVerlet_LC::update_X()
 {
+  // For debugging purposes
+  // std::cout << "update X start" << std::endl; 
+
   // initialize iterator for cell vector
   std::vector<Cell>::iterator cell = W_LC.cells.begin(); 
 
@@ -325,6 +339,20 @@ void VelocityVerlet_LC::update_X()
       // increment cell iterator for while loop
       cell++; 
     }
+
+  // initialize iterator for particle vector
+  std::vector<Particle>::iterator p_cell = W_LC.particles.begin(); 
+  
+  // put particles, which changed their cell from particle vector
+  // (used as memory) into the right cells 
+  while (p_cell != W_LC.particles.end())
+    {
+      // put particle in right cell
+      W_LC.cells[W_LC.comp_cell_index(DIM, p_cell->x)].particles.push_back(*p_cell); 
+      // erase particle from memory
+      p_cell = W_LC.particles.erase(p_cell); 
+    }
+  
 }
 
 
