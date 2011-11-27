@@ -33,7 +33,7 @@ public:
    *
    * @param filename filename of the particles file
    */
- virtual void read_Particles(const std::string &filename); 
+  virtual void read_Particles(const std::string &filename); 
 
   /**
    * @brief calculate the index of the cell on the basis of cartesian
