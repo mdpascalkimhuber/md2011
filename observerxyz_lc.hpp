@@ -17,7 +17,7 @@ public:
    *
    * @brief _W
    */
-  ObserverXYZ_LC(World_LC &_W); 
+  ObserverXYZ_LC(World_LC &_W);  
   
   /* @brief destructor
    *
@@ -43,11 +43,11 @@ public:
   /**
    * @brief output coordinates of the particles in xyz_file
    */
-  //  virtual void output_xyz(); 
+  virtual void output_xyz(); 
 
 protected: 
   // World_LC
-  World_LC W_LC; 
+  World_LC &W_LC; 
   // xyz_filestream
   std::ofstream coordinates_xyz; 
 

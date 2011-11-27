@@ -2,6 +2,7 @@
 #define _VELOCITYVERLET_LC_HPP
 
 #include "timediscretization.hpp"
+#include "observerxyz_lc.hpp"
 
 /**
  * @brief Implementation of the VelocityVerlet_LC Algorithm
@@ -15,7 +16,7 @@ public:
    * @param _Pot potential used for force calculation
    * @param _O Observer of the simulation
    */
-  VelocityVerlet_LC(World_LC& _W, Potential& _Pot, Observer &_O);
+  VelocityVerlet_LC(World_LC& _W, Potential& _Pot, ObserverXYZ_LC &_O);
 
   /**
    * @brief run a single timestep
@@ -83,6 +84,8 @@ protected:
   // data structures inherited from TimeDiscretization
   /// linked_cell world 
   World_LC &W_LC; 
+  /// observer for linked_cell world
+  ObserverXYZ_LC &O_LC; 
   
 private:
   VelocityVerlet_LC(); 

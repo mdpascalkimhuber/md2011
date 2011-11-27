@@ -2,14 +2,11 @@
 #include <iostream>
 #include <cstdio>
 
-#include "world.hpp"
 #include "world_lc.hpp"
 #include "gravitypotential.hpp"
 #include "ljpotential.hpp"
-#include "velocityverlet.hpp"
 #include "velocityverlet_lc.hpp"
-#include "observer.hpp"
-#include "observerxyz.hpp"
+#include "observerxyz_lc.hpp"
 
 
 using namespace std;
@@ -46,7 +43,7 @@ int main(int argc, char *argv[]) {
 
   //  std::cout << W.cells[0].particles[0] << std::endl;  
   // create the Observer
-  ObserverXYZ O(W);
+  ObserverXYZ_LC O(W);
 
   // instanciate timediscretization 
   VelocityVerlet_LC Verlet(W, Pot, O);

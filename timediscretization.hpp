@@ -5,6 +5,7 @@
 #include "world_lc.hpp"
 #include "potential.hpp"
 #include "observer.hpp"
+#include "observerxyz_lc.hpp"
 #include "cell.hpp"
 #include <iostream>
 

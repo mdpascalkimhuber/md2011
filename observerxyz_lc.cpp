@@ -21,7 +21,7 @@ ObserverXYZ_LC::~ObserverXYZ_LC()
 }
 
 
-// write all coordinates of every particle in Cell C in an xyz_file
+// write all coordinates of every particle in Cell C in a xyz_file
 void ObserverXYZ_LC::output_xyz_in(Cell &C)
 {
   // initialize iterator for particle vector
@@ -38,13 +38,35 @@ void ObserverXYZ_LC::output_xyz_in(Cell &C)
 	  coordinates_xyz << "\t" << p_cell->x[dim]; 
 	}
       coordinates_xyz << std::endl; 
+
       // increment iterator
       p_cell++; 
     }
 }
 
+// write all coordinates of everey particle in the World in a xyz_file
+void ObserverXYZ_LC::output_xyz()
+{
+  // initialize iterator for cell vector
+  std::vector<Cell>::iterator cell = W_LC.cells.begin(); 
+  
+  // write number of particles
+  coordinates_xyz << W_LC.particles_N << std::endl; 
+
+  // write time
+  coordinates_xyz << std::fixed << std::setprecision(8) << "Zeit: " << W_LC.t << std::endl; 
+
+  // write coordinates of all particles in all cells
+  while (cell != W_LC.cells.end())
+    {
+      output_xyz_in(*cell); 
+      cell++; 
+    }
+}
 
 void ObserverXYZ_LC::notify()
 {
+  // call output functions
   Observer::output_statistics(); 
+  output_xyz(); 
 }

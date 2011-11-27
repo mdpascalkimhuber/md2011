@@ -2,6 +2,7 @@
 #define _OBSERVER_HPP
 
 #include "world.hpp"
+#include "world_lc.hpp"
 #include <iostream>
 #include <fstream>
 
@@ -18,7 +19,7 @@ public:
    * @param _W
    */
   Observer(World& _W);
-  
+
   /**
    * @brief destructor
    *

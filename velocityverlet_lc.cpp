@@ -1,8 +1,9 @@
 #include "velocityverlet_lc.hpp"
+#include "observerxyz_lc.hpp"
 #include <math.h>
 
 // new constructor with argument World_LC
-VelocityVerlet_LC::VelocityVerlet_LC(World_LC& _W, Potential& _Pot, Observer &_O) : TimeDiscretization(_W, _Pot, _O), W_LC(_W)
+VelocityVerlet_LC::VelocityVerlet_LC(World_LC& _W, Potential& _Pot, ObserverXYZ_LC &_O) : TimeDiscretization(_W, _Pot, _O), W_LC(_W), O_LC(_O)
 {
   // empty constructor
 }
@@ -17,7 +18,8 @@ void VelocityVerlet_LC::simulate()
   // calculate forces for t=0
   comp_F(); 
   
-  // write start values O.notify(); 
+  // write start values 
+  O_LC.notify(); 
   
   // while simulation end time not reached 
   while (W_LC.t < W_LC.t_end)
@@ -25,7 +27,7 @@ void VelocityVerlet_LC::simulate()
       // make a timestep
       timestep(W_LC.delta_t); 
       // notify observer
-      O.notify(); 
+      O_LC.notify(); 
     }
 }
 
@@ -34,14 +36,13 @@ void VelocityVerlet_LC::simulate()
 void VelocityVerlet_LC::timestep(real delta_t)
 {
   // For debugging purposes:
-  //std::cout << "Making a timestep" << std::endl; 
+  // std::cout << "Making a timestep" << std::endl; 
 
   // increase time
   W_LC.t += delta_t; 
 
   // update coordinates of all particles
   update_X(); 
-
   // calculate all forces and E_pot on the fly
   comp_F(); 
   
@@ -131,21 +132,31 @@ void VelocityVerlet_LC::comp_F_in(Cell &C)
 	  for (x[2] = -1; x[2] < 2; x[2]++) // dimension 3
 	    {
 	      // three if-conditions to check, if neighbour cells exists
-	      if ( (0 <= C.cell_pos[0]+x[0]) && (C.cell_pos[0]+x[0] <= W_LC.world_size[0]-W_LC.cell_length[0])) // dimension 1
-		{
-		  if ( (0 <= C.cell_pos[1]+x[1]) && (C.cell_pos[1]+x[1] <= W_LC.world_size[1]-W_LC.cell_length[1])) // dimension 2
-		    {
-		      if ( (0 <= C.cell_pos[2]+x[2]) && (C.cell_pos[2]+x[2] <= W_LC.world_size[2]-W_LC.cell_length[2])) // dimension 3
-			{
-			  // calculate all coordinates of neighbour
-			  // cell and save them in helper variable
-			  for (unsigned dim = 0; dim < DIM; dim++)
-			    {
-			      coordinates[dim] = C.cell_pos[dim]+x[dim]; 
+	      // dimension 1 lower border
+	      if ( (0 <= C.cell_pos[0]+x[0])) 
+		{ // dimension 1 upper border
+		  if ( (C.cell_pos[0]+x[0] <= W_LC.world_size[0]-W_LC.cell_length[0])) 
+		    { // dimension 2 lower border
+		      if ( (0 <= C.cell_pos[1]+x[1]) )
+			{ // dimension 2 upper border
+			  if ( (C.cell_pos[1]+x[1] <= W_LC.world_size[1]-W_LC.cell_length[1])) 
+			    { // dimension 3 lower border
+			      if ( (0 <= C.cell_pos[2]+x[2]))
+				{ // dimension 3 upper border
+				  if ( (C.cell_pos[2]+x[2] <= W_LC.world_size[2]-W_LC.cell_length[2]))
+				    {
+				      // calculate all coordinates of neighbour
+				      // cell and save them in helper variable
+				      for (unsigned dim = 0; dim < DIM; dim++)
+					{
+					  coordinates[dim] = C.cell_pos[dim]+x[dim]; 
+					}
+				      // calculate the forces acting on particles
+				      // in Cell C from actual neighbour cell
+				      comp_F_between(C, W_LC.cells[W_LC.comp_cell_index(DIM, coordinates)]); 
+				    }
+				}
 			    }
-			  // calculate the forces acting on particles
-			  // in Cell C from actual neighbour cell
-			  comp_F_between(C, W_LC.cells[W_LC.comp_cell_index(DIM, coordinates)]); 
 			}
 		    }
 		}
