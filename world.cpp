@@ -78,7 +78,7 @@ void World::read_Parameter(const std::string &filename)
 	      if ( option == "unknown" )
 		borders[dim][1] = unknown; 
 	      if ( option == "periodic" )
-		borders[dim][0] = periodic; 
+		borders[dim][1] = periodic; 
 	    }
 	}				  
     }

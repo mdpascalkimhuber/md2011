@@ -32,7 +32,7 @@ public:
    *
    * @return potential energy
    */
-  virtual real force(Particle &p, Particle &q);
+  virtual real force(Particle &p, Particle &q, real distance);
 };
 
 #endif _LENNARDJONESPOTENTIAL_HPP

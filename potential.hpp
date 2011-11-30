@@ -27,10 +27,11 @@ public:
    *
    * @param p particle p
    * @param q particl q
+   * @param distance distance between particle p and particle q
    *
    * @return potential energy
    */
-  virtual real force(Particle &p, Particle &q) = 0;
+  virtual real force(Particle &p, Particle &q, real distance) = 0;
 
   // data structure
   /// r_cut 

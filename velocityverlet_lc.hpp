@@ -42,7 +42,7 @@ public:
    * @param Cell C, Cell D
    *
    */
-  virtual void comp_F_between(Cell& C, Cell& D); 
+  virtual void comp_F_between(Cell& C, Cell& D, real cell_distance[DIM]); 
   /**
    * @brief calculate the forces affecting the particles at the
    * current time in one specific cell

@@ -72,13 +72,16 @@ real VelocityVerlet_LC::distance(Particle &p, Particle &q)
 
 // calculate all forces affecting the particles in Cell C with origin
 // in Cell D
-void VelocityVerlet_LC::comp_F_between(Cell& C, Cell& D)
+void VelocityVerlet_LC::comp_F_between(Cell& C, Cell& D, real cell_distance[DIM])
 {
   // declare iterators for both cells
   std::vector<Particle>::iterator p_cell1, p_cell2; 
 
   // initialize first iterator (Cell C)
   p_cell1 = C.particles.begin(); 
+
+  // initialize distance with zero real dist = 0;
+  real dist = 0;
 
   // first loop: calculate the force acting on p_cell1
   while ( p_cell1 != C.particles.end())
@@ -89,12 +92,19 @@ void VelocityVerlet_LC::comp_F_between(Cell& C, Cell& D)
 	{
 	  if (p_cell1 != p_cell2) // no force by particle itself
 	    {
+
+	      // calculating distance
+	      for (unsigned dim = 0; dim < DIM; dim++) {
+		dist += sqr((p_cell2->x[dim]+cell_distance[dim])-(p_cell1->x[dim]+cell_distance[dim]));    
+	      }
+	      dist = sqrt(dist); 
+
 	      // compare distance to r_cut
-	      if (distance(*p_cell1, *p_cell2) < Pot.r_cut)
+	      if (dist < Pot.r_cut)
 		{
 		  // Add force by p_cell2 and calculate $ E_{pot} =
 		  // E_{pot} * \frac{1}{2} V_{1,2} $
-		  W.e_pot += 0.5*Pot.force(*p_cell1, *p_cell2); 
+		  W.e_pot += 0.5*Pot.force(*p_cell1, *p_cell2, dist); 
 		}
 	    }
 	  // increment p_cell2 (inner while-loop)
@@ -108,10 +118,13 @@ void VelocityVerlet_LC::comp_F_between(Cell& C, Cell& D)
 // calculate forces of particles in neighbour cells of Cell C
 void VelocityVerlet_LC::comp_F_in(Cell &C)
 {
+  // helper bool variable
+  bool neighbour; 
   // helper variable for coordinates of neighbour cell
-  real coordinates[DIM]; 
-  real x[DIM]; 
-
+  real coordinates[DIM];  // coordinates of neighbour cell 
+  real x[DIM]; // just an index for for-loops
+  real cell_distance[DIM]; // relative distances for force calculation
+ 
   // helper iterator for particle vector in Cell C
   std::vector<Particle>::iterator p_cell = C.particles.begin(); 
 
@@ -124,6 +137,8 @@ void VelocityVerlet_LC::comp_F_in(Cell &C)
       p_cell++;
     }
 
+  // set bool variable positive (we are optimistic!)
+  neighbour = true; 
   // three for loops (for each dimension) to get all neighbour cells
   for (x[0] = -1; x[0] < 2; x[0]++) // dimension 1
     {
@@ -131,39 +146,89 @@ void VelocityVerlet_LC::comp_F_in(Cell &C)
 	{
 	  for (x[2] = -1; x[2] < 2; x[2]++) // dimension 3
 	    {
-	      // three if-conditions to check, if neighbour cells exists
+	      // calculate all coordinates of neighbour
+	      // cell and save them in helper variable
+	      for (unsigned dim = 0; dim < DIM; dim++)
+		{
+		  coordinates[dim] = C.cell_pos[dim]+x[dim]; 
+		}
+	      
+	      // initialize cell_distances
+	      for ( unsigned dim = 0; dim < DIM; dim++)
+		{
+		  cell_distance[dim] = 0; 
+		}
+
+	      // six if-conditions to check, if neighbour cells exists
 	      // dimension 1 lower border
-	      if ( (0 <= C.cell_pos[0]+x[0])) 
-		{ // dimension 1 upper border
-		  if ( (C.cell_pos[0]+x[0] <= W_LC.world_size[0]-W_LC.cell_length[0])) 
-		    { // dimension 2 lower border
-		      if ( (0 <= C.cell_pos[1]+x[1]) )
-			{ // dimension 2 upper border
-			  if ( (C.cell_pos[1]+x[1] <= W_LC.world_size[1]-W_LC.cell_length[1])) 
-			    { // dimension 3 lower border
-			      if ( (0 <= C.cell_pos[2]+x[2]))
-				{ // dimension 3 upper border
-				  if ( (C.cell_pos[2]+x[2] <= W_LC.world_size[2]-W_LC.cell_length[2]))
-				    {
-				      // calculate all coordinates of neighbour
-				      // cell and save them in helper variable
-				      for (unsigned dim = 0; dim < DIM; dim++)
-					{
-					  coordinates[dim] = C.cell_pos[dim]+x[dim]; 
-					}
-				      // calculate the forces acting on particles
-				      // in Cell C from actual neighbour cell
-				      comp_F_between(C, W_LC.cells[W_LC.comp_cell_index(DIM, coordinates)]); 
-				    }
-				}
-			    }
+	      for (unsigned dim = 0; dim < DIM; dim++)
+		{
+
+		  // @brief  look for neighbours at each side of your
+		  // cell: left/right, up/down, for/behind
+		  if ( 0 > (C.cell_pos[dim]+x[dim]*W_LC.cell_length[dim])) 
+		    {
+		      // BORDER HANDLING
+		      // now look at  lower border
+		      switch (W_LC.borders[dim][0])
+			{
+			  // if border_type = leaving, than we have no neighbour
+			case leaving : neighbour = false; 
+			  break; 
+			  // if border_type = periodic, than look for the
+			  // cell at the other end of the world
+			case periodic: 
+			  {
+			    coordinates[dim] = (W_LC.world_size[dim] - W_LC.cell_length[dim]); 
+			    cell_distance[dim] = -(W_LC.world_size[dim]); 
+			    break; 
+			  }
+			  // if border_type is unknown, we do not know
+			  // what to do!
+			case unknown: std::cout << "Help, border is unknown." << std::endl; 
+			  break; 
 			}
 		    }
+		  //  upper border
+		  if ( (C.cell_pos[dim]+x[0]*W_LC.cell_length[dim]) > (W_LC.world_size[dim]-W_LC.cell_length[dim])) 
+		    {
+		      // BORDER HANDLING
+		      // now look at the first dimension, the upper border
+		      switch (W_LC.borders[dim][1])
+			{
+			  // if border_type is leaving, we have no neighbour
+			case leaving : neighbour = false; 
+			  break; 
+			  // if border_type is periodic, look at the cell
+			  // at the other end of the world
+			case periodic:
+			  {
+			    coordinates[dim] = 0;  
+			    cell_distance[dim] = W_LC.world_size[dim]; 
+			  break; 
+			  }
+			  // if border_type is unknown, we do not know,
+			  // what to do.
+			case unknown: std::cout << "Help, border is unknown." << std::endl; 
+			  break; 
+			}
+		    }
+
+		}
+	      // if the cell we look at is  a neighbour,this means the border_type is in all
+	      // dimensions not leaving, (for the moment this means
+	      // periodic), we calculate the forces between this cells
+	      if ( neighbour )
+		{
+		  // calculate the forces acting on particles
+		  // in Cell C from actual neighbour cell
+		  comp_F_between(C, W_LC.cells[W_LC.comp_cell_index(DIM, coordinates)], cell_distance); 
 		}
 	    }
 	}
     }
 }
+
 
 // calculate all forces of all particles: call comp_F_in for all Cells
 // in World_LC
@@ -178,7 +243,9 @@ void VelocityVerlet_LC::comp_F()
   // calculate forces for every cell
   while ( cell != W_LC.cells.end())
     {
+      // call the function comp_F_in to compute the force
       comp_F_in(*cell); 
+      // go to the next cell
       cell++;
     }
 }
@@ -219,6 +286,8 @@ void VelocityVerlet_LC::update_V()
   // initialize E_kin with 0
   W_LC.e_kin = 0; 
 
+  // update the velocity for each cell
+  // therefore call the function update_V_in
   while ( cell != W_LC.cells.end())
     {
       update_V_in(*cell); 
@@ -235,12 +304,13 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 
   // initialize iterator for particles vector
   std::vector<Particle>::iterator p_cell = C.particles.begin();
-  
+
+  // a while loop to look for each cell  
   while (p_cell != C.particles.end())
     {
+      // and to look for each dimension
       for ( unsigned dim = 0; dim < DIM; dim++)
 	{
-
 	  // update coordinate of particle by formula $ x = x + \delta_t v + \frac{F \delta_t}{2 m} $
           p_cell->x[dim] = p_cell->x[dim] + W_LC.delta_t * (p_cell->v[dim] + ((0.5 / p_cell->m) * p_cell->F[dim] * W_LC.delta_t));
 	  
@@ -250,7 +320,7 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
       // For debugging purposes
       // std::cout << "Cell no. " << C.id << *p_cell << std::endl; 
 
-      // til now, new positions have been calculated, next step ist
+      // till now, new positions have been calculated, next step is
       // border_handling and cell index managing; this will only work
       // in THREE DIMENSIONS
 
@@ -258,10 +328,10 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
       bool is_leaving = false; 
       
       // check if particle is still in world, if not handle with it! 
-      for ( unsigned dim = 0; dim < DIM; dim++) // checking al dimensions
+      for ( unsigned dim = 0; dim < DIM; dim++) // checking all dimensions
 	{
 	  if ( p_cell->x[dim] < 0) // lower border
-	    { 
+	    {
 	      // border handling: check which border_type
 	      switch (W_LC.borders[dim][0])
 		{
@@ -269,15 +339,18 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 		  {
 		    std::cout << "Border (" << dim << ", " << 0 
 			      << ") is unknown. Don't know what to do!" << std::endl;  
+		    break;
 		  }
 		case leaving : // particle left the world (so say a prayer)
 		  {
 		    is_leaving = true; 
+		    break;
 		  }
 		case periodic : // particle left the world and joins on
 				// the other side
 		  {
-		    // MUST BE WRITTEN 
+		    p_cell->x[dim] = W_LC.world_size[dim] + p_cell->x[dim];
+		    break; 
 		  }
 		}
 	    }
@@ -290,20 +363,24 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 		  {
 		    std::cout << "Border (" << dim << ", " << 0 
 			      << ") is unknown. Don't know what to do!" << std::endl;  
+		    break;
 		  }
 		case leaving : // particle left the world (so say a prayer)
 		  {
 		    is_leaving = true; 
+		    break; 
 		  }
 		case periodic : // particle left the world and joins
 				// on the other side
 		  {
 		    // MUST BE WRITTEN 
+		    p_cell->x[dim] = p_cell->x[dim] - W_LC.world_size[dim]; 
+		    break; 
 		  }
 		}
 	    }
 	}
-      if ( is_leaving) // if particle left this world, destroy it!
+      if ( is_leaving ) // if particle left this world, destroy it!
 	{
 	  // For debbuging purposes
 	  // std::cout << "Hasta la vista!" << std::endl; 
@@ -313,24 +390,24 @@ void VelocityVerlet_LC::update_X_in(Cell &C)
 	  p_cell = C.particles.erase(p_cell); 
 	  W_LC.particles_N--; 
 	}
-      else 
+      else if ( !is_leaving) 
 	{
 	  // particle is still in world, so update cell index and put
 	  // particle in particle vector of the World_LC class
-	  if ( C.id != W_LC.comp_cell_index(DIM, p_cell->x))
-	    {
-    	      // put particle in particles vector of World_LC (memory)
-	      W_LC.particles.push_back(*p_cell); 
-	      // erase particle from current cell
-	      p_cell = C.particles.erase(p_cell); 
-	    }
+	  // if ( C.id != W_LC.comp_cell_index(DIM, p_cell->x))
+	  //{
+	  // put particle in particles vector of World_LC (memory)
+	  W_LC.particles.push_back(*p_cell); 
+	  // erase particle from current cell
+	  // for debugging
+	  // std::cout << "paricle is leaving cell" << std::endl;
+	  p_cell = C.particles.erase(p_cell); 
 	}
-      
-      // increment iterator (if still possible)
-      if (p_cell != C.particles.end())
-	{
-	  p_cell++; 
-	}
+    }
+  // increment iterator (if still possible)
+  if (p_cell != C.particles.end())
+    {
+      p_cell++; 
     }
 }
 
@@ -354,17 +431,19 @@ void VelocityVerlet_LC::update_X()
 
   // initialize iterator for particle vector
   std::vector<Particle>::iterator p_cell = W_LC.particles.begin(); 
-  
+
   // put particles, which changed their cell from particle vector
   // (used as memory) into the right cells 
   while (p_cell != W_LC.particles.end())
     {
       // put particle in right cell
       W_LC.cells[W_LC.comp_cell_index(DIM, p_cell->x)].particles.push_back(*p_cell); 
+
       // erase particle from memory
       p_cell = W_LC.particles.erase(p_cell); 
     }
-  
 }
+
+
 
 
