@@ -125,12 +125,11 @@ void World_LC::read_Particles(const std::string &filename)
     {
 
       // calculate the index of the right cell 
-      std::cout << "calculate the index of right cell" << std::endl; 
       index = comp_cell_index(DIM, itparticle->x); 
 
       // add particle to particles-vector in the right cell
       cells[index].particles.push_back(particles.front()); 
-      std::cout << "put particle" << std::endl;       
+
       // delete particle in world_particles-vector
       itparticle = particles.erase(itparticle); 
     }
