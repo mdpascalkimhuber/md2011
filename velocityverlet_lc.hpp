@@ -36,20 +36,6 @@ public:
   virtual real distance(Particle &p, Particle &q); 
 
   /**
-   * @brief calculate the forces with origin in Cell D affecting the
-   * particles in Cell C
-   * 
-   * @param Cell C, Cell D
-   *
-   */
-  virtual void comp_F_between(Cell& C, Cell& D, real cell_distance[DIM]); 
-  /**
-   * @brief calculate the forces affecting the particles at the
-   * current time in one specific cell
-   */
-  virtual void comp_F_in(Cell& C); 
-
-  /**
    * @brief calculates the forces affecting the particles at the current time
    */
   virtual void comp_F();
@@ -65,15 +51,6 @@ public:
    * @brief calculates the new velocity of the particles
    */
   virtual void update_V();
-
-  /**
-   * @brief calculate the positions of the particles in one Cell C and
-   * handle borders. 
-   *
-   * @param Cell C
-   *
-   */
-  virtual void update_X_in(Cell &C); 
 
   /**
    * @brief calculate the new position of all particles according to their velocity
