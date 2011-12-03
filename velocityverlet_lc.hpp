@@ -35,7 +35,18 @@ public:
    */
   virtual real distance(Particle &p, Particle &q); 
 
+  /**
+   * @brief calculate all forces
+   */
   virtual void comp_F(); 
+
+  /**
+   * @brief calculate forces for all particles in one specific cell
+   *
+   * @param cell_index global index of cell
+   */
+  virtual void comp_F_cell(unsigned cell_index); 
+
   virtual void update_X(); 
   virtual void update_V(); 
   virtual void update_V_in(Cell &C); 

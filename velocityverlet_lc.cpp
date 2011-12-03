@@ -12,10 +12,7 @@ VelocityVerlet_LC::VelocityVerlet_LC(World_LC& _W, Potential& _Pot, ObserverXYZ_
 // makes simulation
 void VelocityVerlet_LC::simulate()
 {
-  // For debugging purposes.
-  // std::cout << "start simulation" << std::endl; 
-
-  // calculate forces for t=0
+    // calculate forces for t=0
   comp_F(); 
   
   // write start values 
@@ -117,7 +114,81 @@ void VelocityVerlet_LC::update_X()
   // do nothing
 }
 
+// calculate forces
 void VelocityVerlet_LC::comp_F()
 {
-  // do nothing
+  // initialize potential energy
+  W_LC.e_pot = 0; 
+
+  // calculate force of every cell
+  for (unsigned c_idx = 0; c_idx < W_LC.cells.size(); c_idx++)
+    {
+      comp_F_cell(c_idx); 
+    }
 }
+
+void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
+{
+  if (cells[c_idx].empty()) return; 
+  else
+    {
+      // define helper variables 
+      int loop_idx[DIM]; 
+      int current_cell[DIM]; 
+      int other_cell[DIM]; 
+
+      // initialize current_cell
+      compute_cell_pos(c_idx, current_cell); 
+
+      // initialize forces in current_cell
+      std::vector<Particle>::iterator it_particle = W_LC.cells[c_idx].particles.begin(); 
+      while (it_particle != W_LC.cells[c_idx].particles.end())
+	{
+	  // for all dimensions
+	  for (unsigned dim = 0; dim < DIM; dim++)
+	    {
+	      it_particle->F[dim] = 0; 
+	    }
+	}
+	 
+      // go over all neighbour-cells with 3 for-loops
+      for ( loop_idx[0] = -1; loop_idx[0] <=1; loop_idx[0]++)
+	{
+	  for ( loop_idx[1] = -1; loop_idx[1] <=1; loop_idx[1]++)
+	    {
+	      for ( loop_idx[2] = -1; loop_idx[2] <=1; loop_idx[2]++)
+		{
+		  // initialize other cell
+		  for (unsigned dim = 0; dim < DIM; dim++)
+		    {
+		      other_cell[dim] = current_cell[dim] + loop_idx[dim]; 
+		    }
+
+		  // special case: compute forces in current_cell
+		  if ((loop_idx[0] == 0) && (loop_idx[1] == 0) && (loop_idx[2] == 0))
+		    comp_F_same_cell(c_idx); 
+
+		  // compute forces for other cells
+		  else
+		    {
+		      comp_F_other_cell(c_idx, other_cell); 
+		    }
+		}
+	    }
+	}
+    }
+}
+
+
+// calculate force for a neighbour cell
+void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell)[DIM])
+{
+  // border handling
+  for (unsigned dim = 0; dim < DIM; dim++)
+    {
+      // check upper border of other_cell
+      if (
+      
+}
+
+  
