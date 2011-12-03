@@ -4,7 +4,7 @@
 // check if cell is empty
 bool Cell::empty()
 {
-  return ( (particles.size() == 0) ? true : false ); 
+  return (particles.size() == 0);  
 }
 
 std::ostream& operator << (std::ostream &os, const Cell &C)
