@@ -183,12 +183,119 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
 // calculate force for a neighbour cell
 void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell)[DIM])
 {
+  
+  // helper variables
+  bool neighbour = true; 
+  unsigned other_idx; 
+  real correct_dist[DIM]; 
+  real dist; 
+  
+  // initialize correct_dist
+  for (unsigned dim = 0; dim < DIM; dim++)
+    {
+      correct_dist[dim] = 0; 
+    }
+  
   // border handling
   for (unsigned dim = 0; dim < DIM; dim++)
     {
-      // check upper border of other_cell
-      if (
-      
+      // check lower_border of other_cell
+      if ( other_cell[dim] < 0 )
+	{
+	  // check witch border_type for lower border
+	  switch (W_LC.border_type[dim][0])
+	    {
+	    case leaving : 
+	      {
+		neighbour = false; 
+		break; 
+	      }
+	    case periodic : 
+	      {
+		// correct position of other_cell
+		other_cell[dim] = W_LC.cell_N[dim]-1; 
+		// correct distance (is later added to distance)
+		correct_dist[dim] = W_LC.cell_N[dim]*W_LC.cell_length[dim]; 
+		break; 
+	      }
+	    case unknown : 
+	      {
+		std:: cout << "Border (" << dim << ", 0) is unknown." << std::endl; 
+		neighbour = false; 
+		break; 
+	      }
+	    }
+	}
+      // check upper_border of other_cell
+      else if ( other_cell[dim] > (W_LC.cell_N[dim]-1))
+	{
+	  // check witch border_type for upper border
+	  switch (W_LC.border_type[dim][1])
+	    {
+	    case leaving : 
+	      {
+		neighbour = false; 
+		break; 
+	      }
+	    case periodic : 
+	      {
+		// correct position of other_cell
+		other_cell[dim] = 0; 
+		// correct distance (is later added to distance)
+		correct_dist[dim] = -(W_LC.cell_N[dim]*W_LC.cell_length[dim]); 
+		break; 
+	      }
+	    case unknown : 
+	      {
+		std:: cout << "Border (" << dim << ", 1) is unknown." << std::endl; 
+		neighbour = false; 
+		break; 
+	      }
+	    }
+	}
+    }
+  
+  // if other_cell exists, calculate forces
+  if (neighbour)
+    {
+      // calculate global index of other_cell
+      other_idx = compute_cell_index(other_cell); 
+
+      // nothing to do for empty cells
+      if (W_LC.cells[other_idx].empty()) return; 
+
+      else 
+	{
+	  // initialize iterators for particles
+	  std::vector<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
+	  std::vector<Particle>::iterator it_q = W_LC.cells[other_idx].particles.begin(); 
+	  
+	  while (it_p != W_LC.cells[c_idx].particles.end())
+	    {
+	      while (it_q != W_LC.cells[other_idx].particles.end())
+		{
+		  // initialize dist
+		  dist = 0; 
+
+		  // calculate correct distance 
+		  for (unsigned dim = 0; dim < DIM; dim++)
+		    {
+		      dist += sqr((it_p->x[dim]+correct_dist[dim]) - it_q->x[dim]); 
+		    }
+		  dist = sqrt(dist); 
+		  
+		  // calculate force with given potential
+		  if (dist < Pot.r_cut) // check if dist small enough  
+		    W.e_pot += 0.5*Pot.force(it_p, it_q, dist); 
+		  
+		  it_q++; 
+		}
+	      it_p++; 
+	    }
+	}
+    }
 }
+
+
 
   
