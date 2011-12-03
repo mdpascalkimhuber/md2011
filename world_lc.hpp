@@ -45,7 +45,7 @@ public:
    * @brief calculate the position in cartesian coordinates of the
    * given cell on the basis of the index in the cell_vector
    */
-  virtual void compute_cell_pos(unsigned index, unsigned (&cell_pos)[DIM]); 
+  virtual void compute_cell_pos(unsigned index, int (&cell_pos)[DIM]); 
 
 
   /// additional data structure for linked cell

@@ -36,14 +36,6 @@ public:
   virtual real distance(Particle &p, Particle &q); 
 
   /**
-<<<<<<< HEAD
-   * @brief calculate all forces
-=======
-   * @brief calculates the forces affecting the particles at the current time
-   */
-  virtual void comp_F();
-
-  /**
    * @brief calculates the new velocities of the particles in Cell C
    *
    * @param Cell C
@@ -52,26 +44,27 @@ public:
 
   /**
    * @brief calculates the new velocity of the particles
->>>>>>> master
    */
   virtual void comp_F(); 
 
   /**
-<<<<<<< HEAD
    * @brief calculate forces for all particles in one specific cell
    *
    * @param cell_index global index of cell
    */
   virtual void comp_F_cell(unsigned cell_index); 
 
+  /** 
+   * @brief calculate forces of all particles in a neighbour cell
+   *
+   * @param cell_index of current cell, and cell_position of neighbour
+   * cell
+   */
+  virtual void comp_F_other_cell(const unsigned cell_index, int (&other_cell)[DIM]); 
+
+  virtual void comp_F_same_cell(const unsigned cell_index); 
   virtual void update_X(); 
   virtual void update_V(); 
-  virtual void update_V_in(Cell &C); 
-=======
-   * @brief calculate the new position of all particles according to their velocity
-   */
-  virtual void update_X();
->>>>>>> master
 
 protected:
   // data structures inherited from TimeDiscretization

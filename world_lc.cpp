@@ -29,7 +29,7 @@ unsigned World_LC::compute_cell_index(const real (&pos)[DIM])
 
 
 // calculate the position of a cell (index_vector) with the global index
-void World_LC::compute_cell_pos(unsigned index, unsigned (&cell_pos)[DIM])
+void World_LC::compute_cell_pos(unsigned index, int (&cell_pos)[DIM])
 {
   // calculate global cell index and save it in cell_pos (cell_pos
   // is the index_vector of a cell)

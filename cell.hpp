@@ -19,7 +19,7 @@ public:
   // id of cell
   unsigned id; 
   // position of cell
-  unsigned cell_pos[DIM]; 
+  int cell_pos[DIM]; 
 };
 
 std::ostream& operator << (std::ostream &os, const Cell &);
