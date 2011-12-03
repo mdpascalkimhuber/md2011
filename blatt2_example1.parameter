@@ -1,0 +1,7 @@
+name blatt2_example1
+delta_t 0.01
+t_end 10.0
+length 10.0 10.0 10.0
+upper_border leaving leaving leaving
+lower_border leaving leaving leaving
+cell_r_cut 10.0
