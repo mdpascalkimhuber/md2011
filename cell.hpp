@@ -8,6 +8,10 @@
 class Cell 
 {
 public: 
+  /**
+   * @brief check if cell is empty
+   */
+  bool empty(); 
   
   // data structure
   /// The cell contains particles ...

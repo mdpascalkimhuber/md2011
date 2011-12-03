@@ -91,10 +91,10 @@ void World_LC::read_Parameter(const std::string &filename)
       global_cell_N *= cell_N[dim]; 
     }
   
-  // Adding the right number of cells to world and writing some
-  // information in it
+  // just a helper cell
   Cell new_cell; 
 
+  // Adding cells to world and writing some information in them
   for (unsigned c_idx = 0; c_idx < global_cell_N; c_idx++)
     {
       // give an id to cell
@@ -116,10 +116,13 @@ void World_LC::read_Particles(const std::string &filename)
 {
   // call original read_Parameter of the basis class World
   World::read_Particles(filename); 
-  
-    // helper variable
+
+  // writing total number of particles in particles_N
+  particles_N = particles.size(); 
+
+  // helper variable
   unsigned index; 
-    // helper iterator for particle-vector
+  // helper iterator for particle-vector
   std::vector<Particle>::iterator itparticle = particles.begin(); 
   
   // delete particles of particles-vector and put them in right cells
@@ -139,7 +142,7 @@ void World_LC::read_Particles(const std::string &filename)
 
 std::ostream& operator << (std::ostream& os, World_LC& W) {
   os << "t=" << W.t << " delta_t=" << W.delta_t << " t_end=" << W.t_end
-     << " Number of Particles=" << W.particles.size()
+     << " Number of Particles=" << W.particles_N 
      << " cell_r_cut=" << W.cell_r_cut
      << " Number of cells=" << W.cells.size() << std::endl; 
   

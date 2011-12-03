@@ -1,6 +1,12 @@
 #include "cell.hpp"
 #include <iomanip>
 
+// check if cell is empty
+bool Cell::empty()
+{
+  return ( (particles.size() == 0) ? true : false ); 
+}
+
 std::ostream& operator << (std::ostream &os, const Cell &C)
 {
   os << "Cell no. " << std::setw(6) << C.id << ": "; 
