@@ -4,31 +4,40 @@
 #include <iostream>
 
 
-World_LC::World_LC() : World(), cell_r_cut(0)
+World_LC::World_LC() : World(), cell_r_cut(0), particles_N(0), global_cell_N(1)
 {
   // empty constructor
 }; 
 
 
-// calculate the index of a cell with the coordinates
-// this is a recursive function
-unsigned World_LC::comp_cell_index(unsigned dim, real pos[DIM]) 
+// calculate the index of a cell with given coordinates pos[DIM]
+unsigned World_LC::compute_cell_index(const real (&pos)[DIM]) 
 {
-  unsigned index = 0; 
-  index = unsigned(pos[2]/cell_length[2]) + cell_N[2]* (unsigned(pos[1]/cell_length[1]) + (cell_N[1]*(unsigned(pos[0]/cell_length[0])))); 
+  // helper variables
+  unsigned index = 0;
+  
+  // calculate cell_index by formula $ j = j_3 + N_3(j_2 + N_2j_1) $ 
+  for (unsigned dim = 0; dim < DIM; dim++)
+    {
+      index *= cell_N[dim]; 
+      index += unsigned(pos[dim]/cell_length[dim]);  
+    }
+
+  // return value
   return index; 
 }; 
 
 
-// calculate the position of a cell ont the basis of the given
-// index. WORKS ONLY IN 3 DIMENSIONS
-void World_LC::comp_cell_pos(Cell& C)
+// calculate the position of a cell (index_vector) with the global index
+void World_LC::compute_cell_pos(unsigned index, unsigned (&cell_pos)[DIM])
 {
-  // calculate the position the cell in dimension 1, 2, 3 and save it
-  // in cell_pos
-  C.cell_pos[2] = (cell_length[2]*(C.id % cell_N[2])); 
-  C.cell_pos[1] = (cell_length[1]*(unsigned((C.id - C.cell_pos[2]/cell_length[2])/cell_N[2]) % cell_N[1])); 
-  C.cell_pos[0] = (cell_length[0]*(((C.id - C.cell_pos[2]/cell_length[2])/cell_N[2])-(C.cell_pos[1]/cell_length[1]))/cell_N[1]); 
+  // calculate global cell index and save it in cell_pos (cell_pos
+  // is the index_vector of a cell)
+  for (unsigned dim = DIM; dim > 0; dim--)
+    {
+      cell_pos[dim-1] = index % cell_N[dim-1]; 
+      index = (index - cell_pos[dim-1])/cell_N[dim-1]; 
+    }
 }; 
 
 
@@ -49,9 +58,6 @@ void World_LC::read_Parameter(const std::string &filename)
   // helper strings
   std::string line, option; 
   
-  // set postion of the get pointer in order to avoid to miss data
-  parfile.seekg(std::ios_base::beg); 
-
   // read file till eof
     while ( parfile.good())
     {
@@ -71,36 +77,36 @@ void World_LC::read_Parameter(const std::string &filename)
   // close file
   parfile.close(); 
 
-  // calculating number of cells with length of world and cell_c_cut
+  // calculating number of cells and length of cells
   for (unsigned dim = 0; dim < DIM; dim++) 
     {
       // calculate number of cells: the typecast allows a cell
       // length inferior to cell_r_cut
       cell_N[dim] = int(world_size[dim]/cell_r_cut); 
-    }
-  
-  // calculate length of cells with cell_N
-  for (unsigned dim = 0; dim < DIM; dim++)
-    {
-      // l^{cell}_i = \frac{l^{world}_i}{n^{cell}_i}
-      cell_length[dim] = world_size[dim]/real(cell_N[dim]);
-    }
+      
+      // calculate length of cell (implicit typecast of cell_N)
+      cell_length[dim] = world_size[dim]/cell_N[dim]; 
 
-  // Adding the right number of cells to world 
-  /// calculating total number of cells
-  unsigned cell_N_tot = 1; 
-  for ( unsigned dim = 0; dim < DIM; dim++)
-    {
-      cell_N_tot *= cell_N[dim];
+      // calculating total number of cells
+      global_cell_N *= cell_N[dim]; 
     }
-  /// resize the cell_vector
-  cells.resize(cell_N_tot); 
   
-  for ( unsigned index = 0; index < cells.size(); index++)
+  // Adding the right number of cells to world and writing some
+  // information in it
+  Cell new_cell; 
+
+  for (unsigned c_idx = 0; c_idx < global_cell_N; c_idx++)
     {
-      cells[index].id = index; 
-      comp_cell_pos(cells[index]); 
+      // give an id to cell
+      new_cell.id = c_idx + 1; 
+
+      // give cell_index_pos to cell
+      compute_cell_pos(c_idx, new_cell.cell_pos); 
+      
+      // add cell to cell_vector in world
+      cells.push_back(new_cell); 
     }
+  
 };
 
 
@@ -111,21 +117,16 @@ void World_LC::read_Particles(const std::string &filename)
   // call original read_Parameter of the basis class World
   World::read_Particles(filename); 
   
-  // delete all particles of the particles-vector and put them in the
-  // right cells
-   
-  // helper variable
+    // helper variable
   unsigned index; 
-  
-  // helper iterator for particle-vector
+    // helper iterator for particle-vector
   std::vector<Particle>::iterator itparticle = particles.begin(); 
   
-  // distribute particles while particles-vector not empty
+  // delete particles of particles-vector and put them in right cells
   while (itparticle != particles.end())
     {
-
       // calculate the index of the right cell 
-      index = comp_cell_index(DIM, itparticle->x); 
+      index = compute_cell_index(itparticle->x); 
 
       // add particle to particles-vector in the right cell
       cells[index].particles.push_back(particles.front()); 

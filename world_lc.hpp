@@ -39,13 +39,13 @@ public:
    * @brief calculate the index of the cell on the basis of cartesian
    * coordinates
    */
-  virtual unsigned comp_cell_index(unsigned dim, real pos[DIM]);
+  virtual unsigned compute_cell_index(const real (&pos)[DIM]);
 
   /*
    * @brief calculate the position in cartesian coordinates of the
    * given cell on the basis of the index in the cell_vector
    */
-  virtual void comp_cell_pos(Cell& C); 
+  virtual void compute_cell_pos(unsigned index, unsigned (&cell_pos)[DIM]); 
 
 
   /// additional data structure for linked cell
@@ -57,6 +57,10 @@ public:
   real cell_length[DIM];
   // r_cut used for calculation of the cell length
   real cell_r_cut; 
+  // total number of particles in the world
+  unsigned particles_N; 
+  // total number of cells in the world 
+  unsigned global_cell_N; 
 };
 
 #endif _WORLD_LC_HPP
