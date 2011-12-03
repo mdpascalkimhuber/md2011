@@ -51,7 +51,7 @@ void World::read_Parameter(const std::string &filename)
 	}
 
       // read lower_borders of the observed world
-      if (option=="upper_border")
+      if (option=="lower_border")
 	{
 	  // for each dimension
 	  for (unsigned dim = 0; dim < DIM; dim++)
@@ -67,7 +67,7 @@ void World::read_Parameter(const std::string &filename)
 	}
 
       // read upper_border of the observed world
-      if (option=="lower_border")
+      if (option=="upper_border")
 	{
 	  // for each dimension
 	  for (unsigned dim =0; dim < DIM; dim++)
