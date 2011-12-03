@@ -1,0 +1,7 @@
+name versuch
+delta_t 0.01
+t_end 5.0
+length 6.0 6.0 6.0
+upper_border periodic periodic periodic
+lower_border periodic periodic periodic
+cell_r_cut 2.0
