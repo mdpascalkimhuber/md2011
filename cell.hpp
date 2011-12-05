@@ -8,13 +8,10 @@
 class Cell 
 {
 public: 
-<<<<<<< HEAD
   /**
    * @brief check if cell is empty
    */
   bool empty(); 
-=======
->>>>>>> edc05b93b2a85412d4cbc4ca18d2cdc545149130
   
   // data structure
   /// The cell contains particles ...
@@ -22,11 +19,7 @@ public:
   // id of cell
   unsigned id; 
   // position of cell
-<<<<<<< HEAD
   int cell_pos[DIM]; 
-=======
-  real cell_pos[DIM]; 
->>>>>>> edc05b93b2a85412d4cbc4ca18d2cdc545149130
 };
 
 std::ostream& operator << (std::ostream &os, const Cell &);

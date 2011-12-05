@@ -33,11 +33,7 @@ int main(int argc, char *argv[]) {
   W.read_Particles(argv[2]);
     
   // print World configuration
-<<<<<<< HEAD
   std::cout << W << std::endl; 
-=======
-  std::cout << W << std::endl;
->>>>>>> edc05b93b2a85412d4cbc4ca18d2cdc545149130
 
   // print Cell configuration 
   for ( unsigned index = 0; index < W.cells.size(); index++)
@@ -56,17 +52,10 @@ int main(int argc, char *argv[]) {
   Verlet.simulate();
 
   // print Cell configuration 
-<<<<<<< HEAD
   /*  for ( unsigned index = 0; index < W.cells.size(); index++)
     {
       cout << W.cells[index]; 
       }*/
-=======
-  for ( unsigned index = 0; index < W.cells.size(); index++)
-    {
-      cout << W.cells[index]; 
-    }
->>>>>>> edc05b93b2a85412d4cbc4ca18d2cdc545149130
 
   return EXIT_SUCCESS;
 }

@@ -84,7 +84,6 @@ void World_LC::read_Parameter(const std::string &filename)
       // calculate number of cells: the typecast allows a cell
       // length inferior to cell_r_cut
       cell_N[dim] = int(world_size[dim]/cell_r_cut); 
-<<<<<<< HEAD
       
       // calculate length of cell (implicit typecast of cell_N)
       cell_length[dim] = world_size[dim]/cell_N[dim]; 
