@@ -109,6 +109,7 @@ void VelocityVerlet_LC::update_V()
     }
 }
 
+
 void VelocityVerlet_LC::update_X()
 {
   // do nothing
@@ -301,7 +302,3 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	}
     }
 }
-
-
-
-  

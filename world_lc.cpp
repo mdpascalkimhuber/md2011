@@ -4,6 +4,7 @@
 #include <iostream>
 
 
+
 World_LC::World_LC() : World(), cell_r_cut(0), particles_N(0), global_cell_N(1)
 {
   // empty constructor
@@ -83,6 +84,7 @@ void World_LC::read_Parameter(const std::string &filename)
       // calculate number of cells: the typecast allows a cell
       // length inferior to cell_r_cut
       cell_N[dim] = int(world_size[dim]/cell_r_cut); 
+<<<<<<< HEAD
       
       // calculate length of cell (implicit typecast of cell_N)
       cell_length[dim] = world_size[dim]/cell_N[dim]; 
@@ -106,7 +108,6 @@ void World_LC::read_Parameter(const std::string &filename)
       // add cell to cell_vector in world
       cells.push_back(new_cell); 
     }
-  
 };
 
 
