@@ -150,6 +150,7 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
 	    {
 	      it_particle->F[dim] = 0; 
 	    }
+	  it_particle++; 
 	}
 	 
       // go over all neighbour-cells with 3 for-loops
@@ -182,13 +183,41 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
 
 void VelocityVerlet_LC::comp_F_same_cell(unsigned const c_idx)
 {
-  // do nothing
+  /* --------------------------------------------------------------------------------
+     function does not contain border_handling for special case (only one
+     cell)
+     --------------------------------------------------------------------------------*/
+
+
+  // initialize iterators for particles
+  std::vector<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
+  std::vector<Particle>::iterator it_q = W_LC.cells[c_idx].particles.begin(); 
+
+  // distance for force calculation
+  real dist = 0; 
+
+  while (it_p != W_LC.cells[c_idx].particles.end())
+    {
+      while (it_q != W_LC.cells[c_idx].particles.end())
+	{
+	  if (it_p != it_q)
+	    {
+	      // calculate distance
+	      dist = distance(*it_p, *it_q); 
+	      // calculate force
+	      W_LC.e_pot += 0.5*Pot.force(*it_p, *it_q, dist); 
+	    }
+	  // increment iterator 
+	  it_q++; 
+	}
+      // increment iterator
+      it_p++; 
+    }
 }
 
 // calculate force for a neighbour cell
 void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell)[DIM])
-{
-  
+{ 
   // helper variables
   bool neighbour = true; 
   unsigned other_idx; 
@@ -227,7 +256,7 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	      }
 	    case unknown : 
 	      {
-		std:: cout << "Border (" << dim << ", 0) is unknown." << std::endl; 
+		std::cout << "Border (" << dim << ", 0) is unknown." << std::endl; 
 		neighbour = false; 
 		break; 
 	      }
@@ -277,6 +306,11 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	  std::vector<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
 	  std::vector<Particle>::iterator it_q = W_LC.cells[other_idx].particles.begin(); 
 	  
+	  // helper particle
+	  Particle mem_par;  
+	  // ... and initialize mass (for force-calculation)
+	  mem_par.m = it_q->m; 
+
 	  while (it_p != W_LC.cells[c_idx].particles.end())
 	    {
 	      while (it_q != W_LC.cells[other_idx].particles.end())
@@ -287,13 +321,14 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 		  // calculate correct distance 
 		  for (unsigned dim = 0; dim < DIM; dim++)
 		    {
-		      dist += sqr((it_p->x[dim]+correct_dist[dim]) - it_q->x[dim]); 
+		      dist += sqr(it_p->x[dim] - (it_q->x[dim] - correct_dist[dim])); 
+		      mem_par.x[dim] = it_q->x[dim] - correct_dist[dim]; 
 		    }
 		  dist = sqrt(dist); 
 		  
 		  // calculate force with given potential
 		  if (dist < Pot.r_cut) // check if dist small enough  
-		    W.e_pot += 0.5*Pot.force(*it_p, *it_q, dist); 
+		    W_LC.e_pot += 0.5*Pot.force(*it_p, mem_par, dist); 
 		  
 		  it_q++; 
 		}
