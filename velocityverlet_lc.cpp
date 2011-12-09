@@ -109,11 +109,139 @@ void VelocityVerlet_LC::update_V()
     }
 }
 
-
+// update positions in all cells
 void VelocityVerlet_LC::update_X()
 {
-  // do nothing
+  // initialize helper variables
+  std::vector<Particle>::iterator it_p = W_LC.particles.begin(); 
+  unsigned c_idx = 0; 
+  
+  // go through cells and update X!
+  for (c_idx = 0; c_idx < W_LC.cells.size(); c_idx++)
+    {
+      update_X_in(c_idx); 
+    }
+
+  // resort particles, which changed their cell
+  while (it_p != W_LC.particles.end())
+    {
+      // compute global cell_index of new cell
+      c_idx = W_LC.compute_cell_index(it_p->x); 
+      
+      // push particle in new cell
+      W_LC.cells[c_idx].particles.push_back(*it_p); 
+
+      // erase particle from particles-vector and increment iterator
+      it_p = W_LC.particles.erase(it_p); 
+    }
 }
+
+
+// update postions of particles in one cell
+void VelocityVerlet_LC::update_X_in(unsigned c_idx)
+{
+  // initialize particle iterator
+  std::vector<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
+  
+  // initialize bool variable for border_handling
+  bool is_leaving = false; 
+
+  while (it_p != W_LC.cells[c_idx].particles.end())
+    {
+      // update position of it_p
+      for (unsigned dim = 0; dim < DIM; dim++)
+	{
+	  // update coordinate of particle by formula $ x = x + /delta_t v + \frac{F \delta_t}{2 m} $
+	  it_p->x[dim] = it_p->x[dim] + W_LC.delta_t * (it_p->v[dim] + ((0.5 / it_p->m) * it_p->F[dim] * W_LC.delta_t));
+	    
+	  // update F_old
+	  it_p->F_old[dim] = it_p->F[dim]; 
+	}
+      // initialize bool variable for border_handling
+      is_leaving = false; 
+      
+      //--------------------------------------------------------------------------------
+      // border_handling
+
+      for (unsigned dim = 0; dim < DIM; dim++)
+	{
+	  // check lower border
+	  if ( it_p->x[dim] < 0 )
+	    {
+	      switch (W_LC.borders[dim][0])
+		{
+		case unknown: // if borders are unknown...
+		  {
+		    std::cout << "Border (" << dim << ", 0) in unknown." << std::endl; 
+		    break; 
+		  }
+		case leaving: // set is_leaving true for later handling
+		  {
+		    is_leaving = true; 
+		    break; 
+		  }
+		case periodic: // correct position
+		  {
+		    it_p->x[dim] += W_LC.world_size[dim]; 
+		    break; 
+		  }
+		}
+	    }
+
+	  // check upper border
+	  if ( it_p->x[dim] > W_LC.world_size[dim])
+	    {
+	      switch (W_LC.borders[dim][1])
+		{
+		case unknown: // if borders are unknown...
+		  {
+		    std::cout << "Border (" << dim << ", 1) in unknown." << std::endl; 
+		    break; 
+		  }
+		case leaving: // set is_leaving true for later handling
+		  {
+		    is_leaving = true; 
+		    break; 
+		  }
+		case periodic: // correct position
+		  {
+		    it_p->x[dim] -= W_LC.world_size[dim]; 
+		    break; 
+		  }
+		}
+	    }
+	}
+      
+      // if particle is leaving, throw it out
+      if (is_leaving)
+	{
+	  // erase particle from cell and increment iterator
+	  it_p = W_LC.cells[c_idx].particles.erase(it_p); 
+	  // decrement number of particles 
+	  W_LC.particles_N--; 
+	}
+      
+      // if particle is not leaving, put it in the right cell
+      else
+	{
+	  // if particle changes cell, put it in W_LC.particles
+	  if (W_LC.compute_cell_index(it_p->x) != c_idx)
+	    {
+	      // push_back
+	      W_LC.particles.push_back(*it_p); 
+	      
+	      // erase particle and increment iterator
+	      it_p = W_LC.cells[c_idx].particles.erase(it_p); 
+	    }
+	  else 
+	    {
+	      // increment iterator, if nothing happened
+	      it_p++; 
+	    }
+	}
+    }
+}
+
 
 // calculate forces
 void VelocityVerlet_LC::comp_F()
@@ -204,6 +332,7 @@ void VelocityVerlet_LC::comp_F_same_cell(unsigned const c_idx)
 	    {
 	      // calculate distance
 	      dist = distance(*it_p, *it_q); 
+
 	      // calculate force
 	      W_LC.e_pot += 0.5*Pot.force(*it_p, *it_q, dist); 
 	    }

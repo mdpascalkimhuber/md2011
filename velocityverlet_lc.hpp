@@ -35,14 +35,7 @@ public:
    */
   virtual real distance(Particle &p, Particle &q); 
 
-  /**
-   * @brief calculates the new velocities of the particles in Cell C
-   *
-   * @param Cell C
-   */
-  virtual void update_V_in(Cell &C); 
-
-  /**
+    /**
    * @brief calculates the new velocity of the particles
    */
   virtual void comp_F(); 
@@ -62,9 +55,37 @@ public:
    */
   virtual void comp_F_other_cell(const unsigned cell_index, int (&other_cell)[DIM]); 
 
+  /**
+   * @brief calculate forces of particles within same cell
+   *
+   * @param cell_index of current cell
+   */
   virtual void comp_F_same_cell(const unsigned cell_index); 
+
+  /**
+   * @brief update positions of all particles
+   */
   virtual void update_X(); 
+
+  /**
+   * @brief update positions of all particles in one cell
+   *
+   * @param cell_index of current cell
+   */
+  virtual void update_X_in(unsigned cell_index); 
+
+  /**
+   * @brief update velocities of all particles 
+   */
   virtual void update_V(); 
+
+  /**
+   * @brief calculates the new velocities of the particles in Cell C
+   *
+   * @param Cell C
+   */
+  virtual void update_V_in(Cell &C); 
+
 
 protected:
   // data structures inherited from TimeDiscretization

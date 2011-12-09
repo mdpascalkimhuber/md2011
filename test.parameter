@@ -1,6 +1,6 @@
 name test1
 delta_t 0.01
-t_end 10.0
+t_end 1.0
 length 10.0 10.0 10.0
 upper_border leaving leaving leaving
 lower_border leaving leaving leaving

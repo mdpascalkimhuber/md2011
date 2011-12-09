@@ -41,7 +41,6 @@ int main(int argc, char *argv[]) {
       cout << W.cells[index]; 
     }
 
-  //  std::cout << W.cells[0].particles[0] << std::endl;  
   // create the Observer
   ObserverXYZ_LC O(W);
 
@@ -52,10 +51,10 @@ int main(int argc, char *argv[]) {
   Verlet.simulate();
 
   // print Cell configuration 
-  /*  for ( unsigned index = 0; index < W.cells.size(); index++)
+  for ( unsigned index = 0; index < W.cells.size(); index++)
     {
       cout << W.cells[index]; 
-      }*/
+      }
 
   return EXIT_SUCCESS;
 }
