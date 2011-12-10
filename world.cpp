@@ -137,11 +137,11 @@ void World::read_Particles(const std::string &filename)
   parfile.close(); 
 }
 
-std::ostream& operator << (std::ostream& os, World& W) {
+/*std::ostream& operator << (std::ostream& os, World& W) {
   os << "t=" << W.t << " delta_t=" << W.delta_t << " t_end=" << W.t_end
      << " Number of Particles=" << W.particles.size();
   return os;
-}
+  }*/
 
 // vim:set et sts=4 ts=4 sw=4 ai ci cin:
 

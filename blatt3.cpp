@@ -51,10 +51,10 @@ int main(int argc, char *argv[]) {
   Verlet.simulate();
 
   // print Cell configuration 
-  for ( unsigned index = 0; index < W.cells.size(); index++)
+  /*  for ( unsigned index = 0; index < W.cells.size(); index++)
     {
       cout << W.cells[index]; 
-      }
+      }*/
 
   return EXIT_SUCCESS;
 }

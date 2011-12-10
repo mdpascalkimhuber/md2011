@@ -34,6 +34,8 @@ void VelocityVerlet_LC::timestep(real delta_t)
 {
   // increase time
   W_LC.t += delta_t; 
+  // print time
+  std::cout << "Timestep: " <<  W_LC.t << std::endl; 
 
   // update coordinates of all particles
   update_X(); 
@@ -56,7 +58,7 @@ real VelocityVerlet_LC::distance(Particle &p, Particle &q)
   
   // calculate distance^2
   for (unsigned dim = 0; dim < DIM; dim++) {
-    distance += sqr(q.x[dim]-p.x[dim]);    
+    distance += sqr(p.x[dim]-q.x[dim]);    
   }
   
   // return square root of distance^2
@@ -78,7 +80,6 @@ void VelocityVerlet_LC::update_V_in(Cell &C)
 	{
 	  // update velocity of particle by formula $ v = v + \delta_t \frac{F+F_{old}}{2m} $
 	  p_cell->v[dim] = p_cell->v[dim] + (W_LC.delta_t * (0.5 / p_cell->m) * (p_cell->F[dim] + p_cell->F_old[dim])); 
-	  
 	  // update E_{kin} = frac{m}{2} * v^2
 	  W_LC.e_kin += 0.5 * p_cell->m * sqr(p_cell->v[dim]);
 	}
@@ -276,17 +277,19 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
 	  // for all dimensions
 	  for (unsigned dim = 0; dim < DIM; dim++)
 	    {
+	      //	      std::cout << "v: " << it_particle->v[dim]
+	      // 	<< " F: " << it_particle->F[dim] << std::endl; 
 	      it_particle->F[dim] = 0; 
 	    }
 	  it_particle++; 
 	}
 	 
       // go over all neighbour-cells with 3 for-loops
-      for ( loop_idx[0] = -1; loop_idx[0] <=1; loop_idx[0]++)
+      for ( loop_idx[0] = -1; loop_idx[0] <2; loop_idx[0]++)
 	{
-	  for ( loop_idx[1] = -1; loop_idx[1] <=1; loop_idx[1]++)
+	  for ( loop_idx[1] = -1; loop_idx[1] <2; loop_idx[1]++)
 	    {
-	      for ( loop_idx[2] = -1; loop_idx[2] <=1; loop_idx[2]++)
+	      for ( loop_idx[2] = -1; loop_idx[2] <2; loop_idx[2]++)
 		{
 		  // initialize other cell
 		  for (unsigned dim = 0; dim < DIM; dim++)
@@ -296,7 +299,9 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
 
 		  // special case: compute forces in current_cell
 		  if ((loop_idx[0] == 0) && (loop_idx[1] == 0) && (loop_idx[2] == 0))
-		    comp_F_same_cell(c_idx); 
+		    {
+		      comp_F_same_cell(c_idx); 
+		    }
 
 		  // compute forces for other cells
 		  else
@@ -326,15 +331,24 @@ void VelocityVerlet_LC::comp_F_same_cell(unsigned const c_idx)
 
   while (it_p != W_LC.cells[c_idx].particles.end())
     {
+      it_q = W_LC.cells[c_idx].particles.begin(); 
       while (it_q != W_LC.cells[c_idx].particles.end())
 	{
 	  if (it_p != it_q)
 	    {
 	      // calculate distance
 	      dist = distance(*it_p, *it_q); 
+	      for (unsigned dim = 0; dim < DIM; dim++)
+		{
+		  std::cout << it_p->F[dim] << "  "; 
+		} 
 
 	      // calculate force
-	      W_LC.e_pot += 0.5*Pot.force(*it_p, *it_q, dist); 
+	      // check if dist is small enough
+	      if (dist < Pot.r_cut)
+		{
+		  W_LC.e_pot += 0.5*Pot.force(*it_p, *it_q, dist); 
+		}
 	    }
 	  // increment iterator 
 	  it_q++; 
@@ -346,7 +360,7 @@ void VelocityVerlet_LC::comp_F_same_cell(unsigned const c_idx)
 
 // calculate force for a neighbour cell
 void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell)[DIM])
-{ 
+{
   // helper variables
   bool neighbour = true; 
   unsigned other_idx; 
@@ -358,7 +372,7 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
   for (unsigned dim = 0; dim < DIM; dim++)
     {
       correct_dist[dim] = 0; 
-      real_other_cell[dim] = other_cell[dim]; 
+      real_other_cell[dim] = W_LC.cell_length[dim]*other_cell[dim]; 
     }
   
   // border handling
@@ -378,7 +392,7 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	    case periodic : 
 	      {
 		// correct position of other_cell
-		other_cell[dim] = W_LC.cell_N[dim]-1; 
+		real_other_cell[dim] = (W_LC.cell_N[dim]-1)*W_LC.cell_length[dim]; 
 		// correct distance (is later added to distance)
 		correct_dist[dim] = W_LC.cell_N[dim]*W_LC.cell_length[dim]; 
 		break; 
@@ -405,7 +419,7 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	    case periodic : 
 	      {
 		// correct position of other_cell
-		other_cell[dim] = 0; 
+		real_other_cell[dim] = 0.0; 
 		// correct distance (is later added to distance)
 		correct_dist[dim] = -(W_LC.cell_N[dim]*W_LC.cell_length[dim]); 
 		break; 
@@ -427,7 +441,10 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
       other_idx = W_LC.compute_cell_index(real_other_cell); 
 
       // nothing to do for empty cells
-      if (W_LC.cells[other_idx].empty()) return; 
+      if (W_LC.cells[other_idx].empty()) 
+	{
+	  return; 
+	}
 
       else 
 	{
@@ -437,30 +454,37 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	  
 	  // helper particle
 	  Particle mem_par;  
-	  // ... and initialize mass (for force-calculation)
-	  mem_par.m = it_q->m; 
 
 	  while (it_p != W_LC.cells[c_idx].particles.end())
 	    {
+	      // initialize second iterator for every while-loop
+	      it_q = W_LC.cells[other_idx].particles.begin(); 
 	      while (it_q != W_LC.cells[other_idx].particles.end())
 		{
 		  // initialize dist
 		  dist = 0; 
+		  // ... and initialize mass (for force-calculation)
+		  mem_par.m = it_q->m; 
 
 		  // calculate correct distance 
 		  for (unsigned dim = 0; dim < DIM; dim++)
 		    {
 		      dist += sqr(it_p->x[dim] - (it_q->x[dim] - correct_dist[dim])); 
 		      mem_par.x[dim] = it_q->x[dim] - correct_dist[dim]; 
+		      mem_par.v[dim] = it_q->v[dim]; 
+		      mem_par.F[dim] = it_q->F[dim]; 
+		      mem_par.F_old[dim] = it_q->F_old[dim]; 
 		    }
 		  dist = sqrt(dist); 
-		  
+
 		  // calculate force with given potential
 		  if (dist < Pot.r_cut) // check if dist small enough  
 		    W_LC.e_pot += 0.5*Pot.force(*it_p, mem_par, dist); 
 		  
+		  // increment second iterator
 		  it_q++; 
 		}
+	      // increment first iterator
 	      it_p++; 
 	    }
 	}

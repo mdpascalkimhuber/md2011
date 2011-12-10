@@ -63,4 +63,5 @@ public:
   unsigned global_cell_N; 
 };
 
+std::ostream& operator << (std::ostream& os, World_LC& W);
 #endif _WORLD_LC_HPP

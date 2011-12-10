@@ -77,7 +77,7 @@ public:
  *
  * @return resulting stream object
  */
-std::ostream& operator << (std::ostream& os, World& W);
+//std::ostream& operator << (std::ostream& os, World& W);
 
 #endif // _WORLD_HPP
 // vim:set et sts=4 ts=4 sw=4 ai ci cin:

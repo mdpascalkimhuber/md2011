@@ -1,7 +1,7 @@
 name test1
 delta_t 0.01
-t_end 1.0
+t_end 5.0
 length 10.0 10.0 10.0
-upper_border leaving leaving leaving
-lower_border leaving leaving leaving
-cell_r_cut 2.5
+upper_border periodic periodic periodic
+lower_border periodic periodic periodic
+cell_r_cut 5.0
