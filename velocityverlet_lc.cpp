@@ -154,7 +154,7 @@ void VelocityVerlet_LC::update_X_in(unsigned c_idx)
 	{
 	  // update coordinate of particle by formula $ x = x + /delta_t v + \frac{F \delta_t}{2 m} $
 	  it_p->x[dim] = it_p->x[dim] + W_LC.delta_t * (it_p->v[dim] + ((0.5 / it_p->m) * it_p->F[dim] * W_LC.delta_t));
-	    
+
 	  // update F_old
 	  it_p->F_old[dim] = it_p->F[dim]; 
 	}
@@ -277,8 +277,6 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
 	  // for all dimensions
 	  for (unsigned dim = 0; dim < DIM; dim++)
 	    {
-	      //	      std::cout << "v: " << it_particle->v[dim]
-	      // 	<< " F: " << it_particle->F[dim] << std::endl; 
 	      it_particle->F[dim] = 0; 
 	    }
 	  it_particle++; 
@@ -304,7 +302,7 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
 		    }
 
 		  // compute forces for other cells
-		  else
+		  else 
 		    {
 		      comp_F_other_cell(c_idx, other_cell); 
 		    }
@@ -338,16 +336,13 @@ void VelocityVerlet_LC::comp_F_same_cell(unsigned const c_idx)
 	    {
 	      // calculate distance
 	      dist = distance(*it_p, *it_q); 
-	      for (unsigned dim = 0; dim < DIM; dim++)
-		{
-		  std::cout << it_p->F[dim] << "  "; 
-		} 
-
+	      //	      std::cout << "dist in same" << dist << "  "; 
 	      // calculate force
 	      // check if dist is small enough
 	      if (dist < Pot.r_cut)
 		{
 		  W_LC.e_pot += 0.5*Pot.force(*it_p, *it_q, dist); 
+		  
 		}
 	    }
 	  // increment iterator 
@@ -461,32 +456,43 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	      it_q = W_LC.cells[other_idx].particles.begin(); 
 	      while (it_q != W_LC.cells[other_idx].particles.end())
 		{
-		  // initialize dist
-		  dist = 0; 
-		  // ... and initialize mass (for force-calculation)
-		  mem_par.m = it_q->m; 
-
-		  // calculate correct distance 
-		  for (unsigned dim = 0; dim < DIM; dim++)
+		  if (it_q != it_p)
 		    {
-		      dist += sqr(it_p->x[dim] - (it_q->x[dim] - correct_dist[dim])); 
-		      mem_par.x[dim] = it_q->x[dim] - correct_dist[dim]; 
-		      mem_par.v[dim] = it_q->v[dim]; 
-		      mem_par.F[dim] = it_q->F[dim]; 
-		      mem_par.F_old[dim] = it_q->F_old[dim]; 
+		
+		      // initialize dist
+		      dist = 0; 
+		      // ... and initialize mass (for force-calculation)
+		      mem_par.m = it_q->m; 
+		      
+		      // calculate correct distance 
+		      for (unsigned dim = 0; dim < DIM; dim++)
+			{
+			  dist += sqr(it_p->x[dim] - (it_q->x[dim] - correct_dist[dim])); 
+			  mem_par.x[dim] = it_q->x[dim] - correct_dist[dim]; 
+			  mem_par.v[dim] = it_q->v[dim]; 
+			  mem_par.F[dim] = it_q->F[dim]; 
+			  mem_par.F_old[dim] = it_q->F_old[dim]; 
+			}
+		      dist = sqrt(dist); 
+		      if (c_idx == 1163 && dist == 0) std::cout << "dist:  " << dist << std::endl; 
+		      // calculate force with given potential
+		      if (dist < Pot.r_cut) // check if dist small enough  
+			W_LC.e_pot += 0.5*Pot.force(*it_p, mem_par, dist); 
 		    }
-		  dist = sqrt(dist); 
-
-		  // calculate force with given potential
-		  if (dist < Pot.r_cut) // check if dist small enough  
-		    W_LC.e_pot += 0.5*Pot.force(*it_p, mem_par, dist); 
-		  
 		  // increment second iterator
 		  it_q++; 
 		}
 	      // increment first iterator
+	      if (c_idx == 1163)
+		{
+		  for (unsigned dim = 0; dim < DIM; dim++)
+		    {
+		      std::cout << "   c_idx: " << c_idx << "  F: " << it_p->F[dim]; 
+		    }	      
+		  std::cout << std::endl; 
+		}
 	      it_p++; 
-	    }
+		  }
 	}
     }
 }
