@@ -1,4 +1,5 @@
 #include "world_lc.hpp"
+#include <math.h>
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
@@ -11,6 +12,23 @@ World_LC::World_LC() : World(), cell_r_cut(0), particles_N(0), global_cell_N(1)
 }; 
 
 
+// calculate index of a cell with cell_coordinates
+unsigned World_LC::compute_global(const int (&cell_pos)[DIM])
+{
+  // helper
+  unsigned index = 0; 
+
+  // calculate cell_index by formula $ j = j_3 + N_3(j_2 + N_2j_1) $
+  for (unsigned dim = 0; dim < DIM; dim++)
+    {
+      index *= cell_N[dim]; 
+      index += cell_pos[dim];
+    }
+
+  // return value
+  return index; 
+}
+
 // calculate the index of a cell with given coordinates pos[DIM]
 unsigned World_LC::compute_cell_index(const real (&pos)[DIM]) 
 {
@@ -21,7 +39,7 @@ unsigned World_LC::compute_cell_index(const real (&pos)[DIM])
   for (unsigned dim = 0; dim < DIM; dim++)
     {
       index *= cell_N[dim]; 
-      index += unsigned(pos[dim]/cell_length[dim]);  
+      index += int(pos[dim]/cell_length[dim]); 
     }
 
   // return value
@@ -83,7 +101,7 @@ void World_LC::read_Parameter(const std::string &filename)
     {
       // calculate number of cells: the typecast allows a cell
       // length inferior to cell_r_cut
-      cell_N[dim] = int(world_size[dim]/cell_r_cut); 
+      cell_N[dim] = std::max(1, int(world_size[dim]/cell_r_cut)); 
       
       // calculate length of cell (implicit typecast of cell_N)
       cell_length[dim] = world_size[dim]/cell_N[dim]; 

@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   }
 
   // instantiate Potential
-  ljpotential Pot(2.5);
+  LJ_Potential Pot(2.5);
 
   // create World
   World_LC W; 

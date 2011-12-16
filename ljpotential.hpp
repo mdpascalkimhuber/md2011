@@ -7,13 +7,13 @@
  * @brief Subclass from Potential: Calculate the
  * Lennard-Jones-Potential and the resulting forces
  */
-class ljpotential : public Potential {
+class LJ_Potential : public Potential {
 public:
   /**
    * @brief first constructor
    *
    */
-  ljpotential(); 
+  LJ_Potential(); 
 
   /**
    * @brief second constructor with argument r_cut
@@ -21,7 +21,7 @@ public:
    * @param r_cut
    *
    */
-  ljpotential(real r_cut); 
+  LJ_Potential(real r_cut); 
 
   /**
    * @brief calculate the force between the two particles defined by
@@ -35,5 +35,5 @@ public:
   virtual real force(Particle &p, Particle &q, real distance);
 };
 
-#endif _LENNARDJONESPOTENTIAL_HPP
+#endif //_LENNARDJONESPOTENTIAL_HPP
 // vim:set et sts=4 ts=4 sw=4 ai ci cin:

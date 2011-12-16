@@ -2,20 +2,20 @@
 #include <math.h>
 
 // first constructor (r_cut = infinity)
-ljpotential::ljpotential() : Potential()
+LJ_Potential::LJ_Potential() : Potential()
 {
   // empty constructor
 }
 
 // second constructor with argument r_cut
-ljpotential::ljpotential(real r_cut) : Potential(r_cut)
+LJ_Potential::LJ_Potential(real r_cut) : Potential(r_cut)
 {
   // empty constructor
 }
 
 // calculate the force between p and q with the Lennard-Jones
 // Potential 
-real ljpotential::force(Particle &p, Particle &q, real distance)
+real LJ_Potential::force(Particle &p, Particle &q, real distance)
 {
   // free parameters \sigma end \varepsilon
   real sigma = 1; 
@@ -37,8 +37,8 @@ real ljpotential::force(Particle &p, Particle &q, real distance)
       p.F[dim] += (24.0 * epsilon)/(sqr(distance)) * fraction * (1.0-2.0*fraction) * (q.x[dim]-p.x[dim]); 
     }
 
-  // return Gravity Potential
+  // return Potential
   return 4*epsilon*fraction*(fraction-1); 
 }
 
-// vim:set et sts=4 ts=4 sw=4 ai ci cin:
+

@@ -12,7 +12,7 @@ VelocityVerlet_LC::VelocityVerlet_LC(World_LC& _W, Potential& _Pot, ObserverXYZ_
 // makes simulation
 void VelocityVerlet_LC::simulate()
 {
-    // calculate forces for t=0
+  // calculate forces for t=0
   comp_F(); 
   
   // write start values 
@@ -114,7 +114,7 @@ void VelocityVerlet_LC::update_V()
 void VelocityVerlet_LC::update_X()
 {
   // initialize helper variables
-  std::vector<Particle>::iterator it_p = W_LC.particles.begin(); 
+
   unsigned c_idx = 0; 
   
   // go through cells and update X!
@@ -123,6 +123,7 @@ void VelocityVerlet_LC::update_X()
       update_X_in(c_idx); 
     }
 
+  std::vector<Particle>::iterator it_p = W_LC.particles.begin();
   // resort particles, which changed their cell
   while (it_p != W_LC.particles.end())
     {
@@ -168,7 +169,8 @@ void VelocityVerlet_LC::update_X_in(unsigned c_idx)
 	{
 	  // check lower border
 	  if ( it_p->x[dim] < 0 )
-	    {
+	    { // check border_type
+              std::cout << it_p->id << " RAUS" << std::endl;
 	      switch (W_LC.borders[dim][0])
 		{
 		case unknown: // if borders are unknown...
@@ -176,7 +178,7 @@ void VelocityVerlet_LC::update_X_in(unsigned c_idx)
 		    std::cout << "Border (" << dim << ", 0) in unknown." << std::endl; 
 		    break; 
 		  }
-		case leaving: // set is_leaving true for later handling
+		case leaving: // set is_leaving=true for later handling
 		  {
 		    is_leaving = true; 
 		    break; 
@@ -191,7 +193,8 @@ void VelocityVerlet_LC::update_X_in(unsigned c_idx)
 
 	  // check upper border
 	  if ( it_p->x[dim] > W_LC.world_size[dim])
-	    {
+            { // check border_type
+	      std::cout << it_p->id << " RAUS upper" << std::endl;
 	      switch (W_LC.borders[dim][1])
 		{
 		case unknown: // if borders are unknown...
@@ -199,7 +202,7 @@ void VelocityVerlet_LC::update_X_in(unsigned c_idx)
 		    std::cout << "Border (" << dim << ", 1) in unknown." << std::endl; 
 		    break; 
 		  }
-		case leaving: // set is_leaving true for later handling
+		case leaving: // set is_leaving=true for later handling
 		  {
 		    is_leaving = true; 
 		    break; 
@@ -283,9 +286,9 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
 	}
 	 
       // go over all neighbour-cells with 3 for-loops
-      for ( loop_idx[0] = -1; loop_idx[0] <2; loop_idx[0]++)
+      for ( loop_idx[0] = -1; loop_idx[0] <2; loop_idx[0]++) 
 	{
-	  for ( loop_idx[1] = -1; loop_idx[1] <2; loop_idx[1]++)
+	  for ( loop_idx[1] = -1; loop_idx[1] <2; loop_idx[1]++) 
 	    {
 	      for ( loop_idx[2] = -1; loop_idx[2] <2; loop_idx[2]++)
 		{
@@ -315,8 +318,8 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
 void VelocityVerlet_LC::comp_F_same_cell(unsigned const c_idx)
 {
   /* --------------------------------------------------------------------------------
-     function does not contain border_handling for special case (only one
-     cell)
+     function does not contain border_handling for special case that
+     only one cell exists
      --------------------------------------------------------------------------------*/
 
 
@@ -327,20 +330,24 @@ void VelocityVerlet_LC::comp_F_same_cell(unsigned const c_idx)
   // distance for force calculation
   real dist = 0; 
 
+  // calculate forces on all particles it_p
   while (it_p != W_LC.cells[c_idx].particles.end())
     {
+      // initialize iterator it_q for every it_p-loop
       it_q = W_LC.cells[c_idx].particles.begin(); 
+      
+      // calculate force of it_q on it_p
       while (it_q != W_LC.cells[c_idx].particles.end())
 	{
+	  // no force by it_p on itself
 	  if (it_p != it_q)
 	    {
 	      // calculate distance
 	      dist = distance(*it_p, *it_q); 
-	      //	      std::cout << "dist in same" << dist << "  "; 
-	      // calculate force
+	      
 	      // check if dist is small enough
 	      if (dist < Pot.r_cut)
-		{
+		{ // calculate force
 		  W_LC.e_pot += 0.5*Pot.force(*it_p, *it_q, dist); 
 		  
 		}
@@ -357,17 +364,15 @@ void VelocityVerlet_LC::comp_F_same_cell(unsigned const c_idx)
 void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell)[DIM])
 {
   // helper variables
-  bool neighbour = true; 
-  unsigned other_idx; 
-  real correct_dist[DIM]; 
-  real dist; 
-  real real_other_cell[DIM]; 
+  bool neighbour = true; // bool variable for border-handling
+  unsigned other_idx; // global index of other cell
+  real correct_dist[DIM]; // correction of relative distance 
+  real dist; // distance 
   
-  // initialize correct_dist and real_other_cell
+  // initialize correct_dist 
   for (unsigned dim = 0; dim < DIM; dim++)
     {
       correct_dist[dim] = 0; 
-      real_other_cell[dim] = W_LC.cell_length[dim]*other_cell[dim]; 
     }
   
   // border handling
@@ -379,7 +384,7 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	  // check witch border_type for lower border
 	  switch (W_LC.borders[dim][0])
 	    {
-	    case leaving : 
+	    case leaving : // no calculation necessary, if other_cell does not exist
 	      {
 		neighbour = false; 
 		break; 
@@ -387,12 +392,12 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	    case periodic : 
 	      {
 		// correct position of other_cell
-		real_other_cell[dim] = (W_LC.cell_N[dim]-1)*W_LC.cell_length[dim]; 
+		other_cell[dim] = W_LC.cell_N[dim]-1; 
 		// correct distance (is later added to distance)
-		correct_dist[dim] = W_LC.cell_N[dim]*W_LC.cell_length[dim]; 
+		correct_dist[dim] = W_LC.world_size[dim]; 
 		break; 
 	      }
-	    case unknown : 
+	    case unknown : // what to do? 
 	      {
 		std::cout << "Border (" << dim << ", 0) is unknown." << std::endl; 
 		neighbour = false; 
@@ -406,7 +411,7 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	  // check witch border_type for upper border
 	  switch (W_LC.borders[dim][1])
 	    {
-	    case leaving : 
+	    case leaving : // no calculation necessary, if other_cell does not exist
 	      {
 		neighbour = false; 
 		break; 
@@ -414,12 +419,12 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	    case periodic : 
 	      {
 		// correct position of other_cell
-		real_other_cell[dim] = 0.0; 
+		other_cell[dim] = 0; 
 		// correct distance (is later added to distance)
-		correct_dist[dim] = -(W_LC.cell_N[dim]*W_LC.cell_length[dim]); 
+		correct_dist[dim] = -(W_LC.world_size[dim]); 
 		break; 
 	      }
-	    case unknown : 
+	    case unknown : // what to do?
 	      {
 		std:: cout << "Border (" << dim << ", 1) is unknown." << std::endl; 
 		neighbour = false; 
@@ -433,7 +438,8 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
   if (neighbour)
     {
       // calculate global index of other_cell
-      other_idx = W_LC.compute_cell_index(real_other_cell); 
+      // other_idx = W_LC.compute_cell_index(real_other_cell); 
+      other_idx = W_LC.compute_global(other_cell); 
 
       // nothing to do for empty cells
       if (W_LC.cells[other_idx].empty()) 
@@ -449,14 +455,17 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	  
 	  // helper particle
 	  Particle mem_par;  
-
+	  
+	  // calculate forces acting on it_p
 	  while (it_p != W_LC.cells[c_idx].particles.end())
 	    {
 	      // initialize second iterator for every while-loop
 	      it_q = W_LC.cells[other_idx].particles.begin(); 
+	      
+	      // second while-loop force on it_p by it_q
 	      while (it_q != W_LC.cells[other_idx].particles.end())
 		{
-		  if (it_q != it_p)
+		  if (it_q != it_p) // no force by it_p on itself
 		    {
 		
 		      // initialize dist
@@ -467,6 +476,7 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 		      // calculate correct distance 
 		      for (unsigned dim = 0; dim < DIM; dim++)
 			{
+			  // make a copy of it_q with corrected coordinates
 			  dist += sqr(it_p->x[dim] - (it_q->x[dim] - correct_dist[dim])); 
 			  mem_par.x[dim] = it_q->x[dim] - correct_dist[dim]; 
 			  mem_par.v[dim] = it_q->v[dim]; 
@@ -474,7 +484,7 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 			  mem_par.F_old[dim] = it_q->F_old[dim]; 
 			}
 		      dist = sqrt(dist); 
-		      if (c_idx == 1163 && dist == 0) std::cout << "dist:  " << dist << std::endl; 
+		      
 		      // calculate force with given potential
 		      if (dist < Pot.r_cut) // check if dist small enough  
 			W_LC.e_pot += 0.5*Pot.force(*it_p, mem_par, dist); 
@@ -483,16 +493,8 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 		  it_q++; 
 		}
 	      // increment first iterator
-	      if (c_idx == 1163)
-		{
-		  for (unsigned dim = 0; dim < DIM; dim++)
-		    {
-		      std::cout << "   c_idx: " << c_idx << "  F: " << it_p->F[dim]; 
-		    }	      
-		  std::cout << std::endl; 
-		}
 	      it_p++; 
-		  }
+	    }
 	}
     }
 }

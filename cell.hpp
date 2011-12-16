@@ -4,7 +4,9 @@
 #include "particle.hpp"
 #include <vector>
 
-// cell structure for linked cell method
+/** @brief For better calculation the world is devided in a number of
+ *  cells. Each cell contains a Particle_vector. 
+ */
 class Cell 
 {
 public: 

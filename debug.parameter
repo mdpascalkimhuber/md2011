@@ -1,0 +1,7 @@
+name debug
+delta_t 0.01
+t_end 2.0
+length 10.0 10.0 10.0
+upper_border periodic periodic periodic
+lower_border periodic periodic periodic
+cell_r_cut 2.5
