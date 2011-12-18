@@ -6,7 +6,7 @@
 
 
 
-World_LC::World_LC() : World(), cell_r_cut(0.0), particles_N(0), global_cell_N(1), set_start_temp(0.0), therm_step_interval(-1), therm_target_temp(0.0), random_seed(0)
+World_LC::World_LC() : World(), cell_r_cut(0.0), particles_N(0), global_cell_N(1), set_start_temp(-1.0), therm_step_interval(-1), therm_target_temp(-1.0), random_seed(0)
 {
   // empty constructor
 }; 
@@ -146,6 +146,13 @@ void World_LC::read_Particles(const std::string &filename)
   // writing total number of particles in particles_N
   particles_N = particles.size(); 
 
+  // initialize velocities of particles with maxwell_boltzmann, if
+  // thermostat is activated
+  if (set_start_temp != -1)
+    {
+      maxwell_boltzmann(); 
+    }
+  
   // helper variable
   unsigned index; 
   // helper iterator for particle-vector
@@ -165,8 +172,58 @@ void World_LC::read_Particles(const std::string &filename)
     }
 }
 
-void World_LC::maxwell_boltzmann(const unsigned& random_seed)
+
+// initialize all particles with maxwell_boltzmann distributed velocities
+void World_LC::maxwell_boltzmann()
 {
+  std::cout << "maxwell" << std::endl; 
+  // initialize random numbers
+  if (random_seed < 1)
+    srand(time(NULL)); 
+  else
+    srand(random_seed); 
+
+  // initialize iterator for particle_list and helper variables
+  std::list<Particle>::iterator it_p = particles.begin(); 
+  real random_number[DIM-1]; 
+  real mem = 0.0; 
+  real random_mem = 0.0; 
+  
+  // initialize all particles with random velocities
+  while (it_p != particles.end())
+    {
+      do {
+	for (unsigned dim = 0; dim < DIM-1; dim++)
+	  { 
+	    // generate a double in the interval [0.0, 1.0]
+	    random_number[dim] = (double(rand()) / RAND_MAX); 
+	    random_number[dim] = (2.0*random_number[dim]) - 1.0; 
+	  }
+	
+	// initialize mem for next sum
+	mem = 0; 
+
+	// calculate mem
+	for (unsigned dim = 0; dim < DIM-1; dim++)
+	  {
+	    mem += sqr(random_number[dim]); 
+	  }
+      } while (mem > 1.0);
+
+      // calculate random_mem
+      random_mem = (-2.0 * log(mem))/mem;   
+      
+      // initialize velocities
+      for (unsigned dim = 0; dim < DIM-1; dim++)
+	{
+	  it_p->v[dim] = random_number[dim]*sqrt(random_mem); 
+	}
+      // by now, velocitiy in third dimension is set to 0
+      it_p->v[2] = 0; 
+
+      // increment iterator
+      it_p++; 
+    }
 }
 
 

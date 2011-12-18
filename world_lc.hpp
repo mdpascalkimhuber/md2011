@@ -60,7 +60,7 @@ public:
    *
    * @param random_seed
    */
-  virtual void maxwell_boltzmann(const unsigned& random_seed); 
+  virtual void maxwell_boltzmann(); 
 
 
   /// additional data structure for linked cell
@@ -76,6 +76,8 @@ public:
   unsigned particles_N; 
   // total number of cells in the world 
   unsigned global_cell_N; 
+
+  /// additional data structure for thermostat
   // start temperature
   real set_start_temp; 
   // target temperature
@@ -84,6 +86,7 @@ public:
   int therm_step_interval; 
   // random seed for velocity distribution
   unsigned random_seed; 
+
 };
 
 std::ostream& operator << (std::ostream& os, World_LC& W);

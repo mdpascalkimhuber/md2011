@@ -23,6 +23,13 @@ public:
    */
   LJ_Potential(real r_cut); 
 
+  /** 
+   * @brief third constructor with arguments r_cut, sigma, epsilon
+   *
+   * @param r_cut, sigma, epsilon
+   */
+  LJ_Potential(real r_cut, real sigma, real epsilon); 
+
   /**
    * @brief calculate the force between the two particles defined by
    * the Lennard-Jones-Potential and add it to p
@@ -33,6 +40,18 @@ public:
    * @return potential energy
    */
   virtual real force(Particle &p, Particle &q, real distance);
+
+  /**
+   * @brief read paramters like sigma, epsilon, r_cut
+   */
+  virtual void read_Parameter(const std::string &filename); 
+
+
+  /// data structure
+  // sigma
+  real sigma; 
+  // epsilon
+  real epsilon; 
 };
 
 #endif //_LENNARDJONESPOTENTIAL_HPP

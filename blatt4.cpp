@@ -21,7 +21,10 @@ int main(int argc, char *argv[]) {
   }
 
   // instantiate Potential
-  LJ_Potential Pot(2.5);
+  LJ_Potential Pot;
+
+  // read Parameters for Pot; 
+  Pot.read_Parameter(argv[1]); 
 
   // create World
   World_LC W; 
@@ -34,7 +37,7 @@ int main(int argc, char *argv[]) {
     
   // print World configuration
   std::cout << W << std::endl; 
-
+  
   // print Cell configuration 
   for ( unsigned index = 0; index < W.cells.size(); index++)
     {

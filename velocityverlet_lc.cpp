@@ -172,7 +172,6 @@ void VelocityVerlet_LC::update_X_in(unsigned c_idx)
 	  // check lower border
 	  if ( it_p->x[dim] < 0 )
 	    { // check border_type
-              std::cout << it_p->id << " RAUS" << std::endl;
 	      switch (W_LC.borders[dim][0])
 		{
 		case unknown: // if borders are unknown...
@@ -196,7 +195,6 @@ void VelocityVerlet_LC::update_X_in(unsigned c_idx)
 	  // check upper border
 	  if ( it_p->x[dim] > W_LC.world_size[dim])
             { // check border_type
-	      std::cout << it_p->id << " RAUS upper" << std::endl;
 	      switch (W_LC.borders[dim][1])
 		{
 		case unknown: // if borders are unknown...
