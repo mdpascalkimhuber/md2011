@@ -67,6 +67,14 @@ public:
   unsigned particles_N; 
   // total number of cells in the world 
   unsigned global_cell_N; 
+  // start temperature
+  real set_start_temperature; 
+  // target temperature
+  real thermostat_target_temperature; 
+  // thermostat time step intervall
+  int thermostat_step_interval; 
+  // random seed for velocity distribution
+  real random_seed; 
 };
 
 std::ostream& operator << (std::ostream& os, World_LC& W);
