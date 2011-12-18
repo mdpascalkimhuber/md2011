@@ -80,7 +80,9 @@ void World::read_Parameter(const std::string &filename)
 	      if ( option == "periodic" )
 		borders[dim][1] = periodic; 
 	    }
-	}				  
+	}	
+      if (option == " ")
+	std::cout << "Empty line in " << filename << std::cout; 
     }
 
   // close file

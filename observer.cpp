@@ -46,7 +46,7 @@ void Observer::output_statistics()
 void Observer::output_coordinates()
 {
   // initialize iterator
-  std::vector<Particle>::iterator itparticle = W.particles.begin(); 
+  std::list<Particle>::iterator itparticle = W.particles.begin(); 
 
   // write time
   coordinates << std::setw(15) << W.t;

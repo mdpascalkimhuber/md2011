@@ -23,7 +23,7 @@ ObserverXYZ::~ObserverXYZ()
 void ObserverXYZ::output_xyz()
 {
   // initialize iterator
-  std::vector<Particle>::iterator itparticle = W.particles.begin(); 
+  std::list<Particle>::iterator itparticle = W.particles.begin(); 
   
   // write number of particles
   coordinates_xyz << W.particles.size() << std::endl; 

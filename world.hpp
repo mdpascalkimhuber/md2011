@@ -4,6 +4,7 @@
 #include "defines.hpp"
 #include "particle.hpp"
 #include <vector>
+#include <list>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -60,7 +61,7 @@ public:
   /// number of particles
   real particles_N; 
   /// Vector of particles
-  std::vector<Particle> particles;
+  std::list<Particle> particles;
   /// size of world (length in all dimensions)
   real world_size[DIM]; 
   /// bordertype as DIM x 2 matrice

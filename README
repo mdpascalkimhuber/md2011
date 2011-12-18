@@ -1,16 +1,3 @@
-Build the skeleton using
+Achtung!
 
-   make
-
-Execute the program using
-
-   ./blatt1
-
-Generate the documentation using Doxygen
-
-   make doc
-
-Read the documentation with a Browser in
-
-   api-doc/html/index.html
-
+Die .parameter Dateien sind sinnvoll anzupassen.

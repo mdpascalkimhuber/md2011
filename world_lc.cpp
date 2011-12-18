@@ -6,7 +6,7 @@
 
 
 
-World_LC::World_LC() : World(), cell_r_cut(0), particles_N(0), global_cell_N(1)
+World_LC::World_LC() : World(), cell_r_cut(0.0), particles_N(0), global_cell_N(1), set_start_temp(0.0), therm_step_interval(-1), therm_target_temp(0.0), random_seed(0)
 {
   // empty constructor
 }; 
@@ -91,6 +91,14 @@ void World_LC::read_Parameter(const std::string &filename)
       // check option and read values
       if (option=="cell_r_cut")
 	strstr >> cell_r_cut; 
+      if (option== "set_start_temperature")
+	strstr >> set_start_temp; 
+      if (option== "thermostat_step_interval")
+	strstr >> therm_step_interval; 
+      if (option== "thermostat_target_temperature")
+	strstr >> therm_target_temp; 
+      if (option== "random_seed")
+	strstr >> random_seed; 
     }
 
   // close file
@@ -141,7 +149,7 @@ void World_LC::read_Particles(const std::string &filename)
   // helper variable
   unsigned index; 
   // helper iterator for particle-vector
-  std::vector<Particle>::iterator itparticle = particles.begin(); 
+  std::list<Particle>::iterator itparticle = particles.begin(); 
   
   // delete particles of particles-vector and put them in right cells
   while (itparticle != particles.end())
@@ -155,6 +163,10 @@ void World_LC::read_Particles(const std::string &filename)
       // delete particle in world_particles-vector
       itparticle = particles.erase(itparticle); 
     }
+}
+
+void World_LC::maxwell_boltzmann(const unsigned& random_seed)
+{
 }
 
 

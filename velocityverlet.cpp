@@ -55,7 +55,7 @@ void VelocityVerlet::timestep(real delta_t)
 void VelocityVerlet::comp_F()
 {
   // declare iterators for both particles
-  std::vector<Particle>::iterator itparticle1, itparticle2; 
+  std::list<Particle>::iterator itparticle1, itparticle2; 
 
   // initialize first iterator
   itparticle1 = W.particles.begin(); 
@@ -102,7 +102,7 @@ void VelocityVerlet::comp_F()
 void VelocityVerlet::update_V()
 {
   // initialize iterator
-  std::vector<Particle>::iterator itparticle = W.particles.begin();  
+  std::list<Particle>::iterator itparticle = W.particles.begin();  
   
   // initialize E_kin with 0
   W.e_kin = 0; 
@@ -127,7 +127,7 @@ void VelocityVerlet::update_V()
 void VelocityVerlet::update_X()
 {
   // initialize iterator
-  std::vector<Particle>::iterator itparticle = W.particles.begin(); 
+  std::list<Particle>::iterator itparticle = W.particles.begin(); 
 
   // update coordinates of all particles
   while (itparticle != W.particles.end())

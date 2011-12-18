@@ -2,7 +2,7 @@
 #define _CELL_HPP_
 
 #include "particle.hpp"
-#include <vector>
+#include <list>
 
 /** @brief For better calculation the world is devided in a number of
  *  cells. Each cell contains a Particle_vector. 
@@ -17,7 +17,7 @@ public:
   
   // data structure
   /// The cell contains particles ...
-  std::vector<Particle> particles; 
+  std::list<Particle> particles; 
   // id of cell
   unsigned id; 
   // position of cell

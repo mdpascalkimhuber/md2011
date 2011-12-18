@@ -54,6 +54,15 @@ public:
    */
   virtual unsigned compute_global(const int (&cell_pos)[DIM]); 
 
+  /**
+   * @brief initialize all particles with Maxwell-Boltzmann
+   * distributed velocities
+   *
+   * @param random_seed
+   */
+  virtual void maxwell_boltzmann(const unsigned& random_seed); 
+
+
   /// additional data structure for linked cell
   // cells
   std::vector<Cell> cells; 
@@ -68,13 +77,13 @@ public:
   // total number of cells in the world 
   unsigned global_cell_N; 
   // start temperature
-  real set_start_temperature; 
+  real set_start_temp; 
   // target temperature
-  real thermostat_target_temperature; 
+  real therm_target_temp; 
   // thermostat time step intervall
-  int thermostat_step_interval; 
+  int therm_step_interval; 
   // random seed for velocity distribution
-  real random_seed; 
+  unsigned random_seed; 
 };
 
 std::ostream& operator << (std::ostream& os, World_LC& W);

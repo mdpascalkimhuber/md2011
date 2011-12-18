@@ -25,7 +25,7 @@ ObserverXYZ_LC::~ObserverXYZ_LC()
 void ObserverXYZ_LC::output_xyz_in(Cell &C)
 {
   // initialize iterator for particle vector
-  std::vector<Particle>::iterator p_cell = C.particles.begin(); 
+  std::list<Particle>::iterator p_cell = C.particles.begin(); 
   
   while (p_cell != C.particles.end())
     {

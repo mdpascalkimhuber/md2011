@@ -1,6 +1,8 @@
 #include "velocityverlet_lc.hpp"
 #include "observerxyz_lc.hpp"
 #include <math.h>
+#include <cstdlib>
+#include <ctime>
 
 // new constructor with argument World_LC
 VelocityVerlet_LC::VelocityVerlet_LC(World_LC& _W, Potential& _Pot, ObserverXYZ_LC &_O) : TimeDiscretization(_W, _Pot, _O), W_LC(_W), O_LC(_O)
@@ -70,7 +72,7 @@ real VelocityVerlet_LC::distance(Particle &p, Particle &q)
 void VelocityVerlet_LC::update_V_in(Cell &C)
 {
   // initialize iterator 
-  std::vector<Particle>::iterator p_cell = C.particles.begin(); 
+  std::list<Particle>::iterator p_cell = C.particles.begin(); 
 
   // update all velocities and calculate E_kin
   while (p_cell != C.particles.end())
@@ -123,7 +125,7 @@ void VelocityVerlet_LC::update_X()
       update_X_in(c_idx); 
     }
 
-  std::vector<Particle>::iterator it_p = W_LC.particles.begin();
+  std::list<Particle>::iterator it_p = W_LC.particles.begin();
   // resort particles, which changed their cell
   while (it_p != W_LC.particles.end())
     {
@@ -143,7 +145,7 @@ void VelocityVerlet_LC::update_X()
 void VelocityVerlet_LC::update_X_in(unsigned c_idx)
 {
   // initialize particle iterator
-  std::vector<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
+  std::list<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
   
   // initialize bool variable for border_handling
   bool is_leaving = false; 
@@ -274,7 +276,7 @@ void VelocityVerlet_LC::comp_F_cell(unsigned c_idx)
       W_LC.compute_cell_pos(c_idx, current_cell); 
 
       // initialize forces in current_cell
-      std::vector<Particle>::iterator it_particle = W_LC.cells[c_idx].particles.begin(); 
+      std::list<Particle>::iterator it_particle = W_LC.cells[c_idx].particles.begin(); 
       while (it_particle != W_LC.cells[c_idx].particles.end())
 	{
 	  // for all dimensions
@@ -324,8 +326,8 @@ void VelocityVerlet_LC::comp_F_same_cell(unsigned const c_idx)
 
 
   // initialize iterators for particles
-  std::vector<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
-  std::vector<Particle>::iterator it_q = W_LC.cells[c_idx].particles.begin(); 
+  std::list<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
+  std::list<Particle>::iterator it_q = W_LC.cells[c_idx].particles.begin(); 
 
   // distance for force calculation
   real dist = 0; 
@@ -450,8 +452,8 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
       else 
 	{
 	  // initialize iterators for particles
-	  std::vector<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
-	  std::vector<Particle>::iterator it_q = W_LC.cells[other_idx].particles.begin(); 
+	  std::list<Particle>::iterator it_p = W_LC.cells[c_idx].particles.begin(); 
+	  std::list<Particle>::iterator it_q = W_LC.cells[other_idx].particles.begin(); 
 	  
 	  // helper particle
 	  Particle mem_par;  
@@ -498,3 +500,6 @@ void VelocityVerlet_LC::comp_F_other_cell(unsigned const c_idx, int (&other_cell
 	}
     }
 }
+
+
+  
