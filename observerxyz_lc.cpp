@@ -70,3 +70,5 @@ void ObserverXYZ_LC::notify()
   Observer::output_statistics(); 
   output_xyz(); 
 }
+
+

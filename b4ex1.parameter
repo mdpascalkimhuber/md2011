@@ -1,6 +1,6 @@
-name b4ex1
+name b4ex1_5t
 delta_t 0.001
-t_end 1.000
+t_end 5.000
 epsilon 120
 sigma 1
 cell_r_cut 2.5

@@ -5,6 +5,7 @@
 #include "world_lc.hpp"
 #include <iostream>
 #include <fstream>
+#include <deque>
 
 /**
  * @brief an observer for the timediscretization
@@ -42,6 +43,26 @@ public:
    */
   virtual void output_coordinates();
 
+  /**
+   * @brief compute mean-values for e_kin and e_pot
+   */
+  virtual void comp_mean_value(); 
+  
+  /// data structure
+  // list for e_kin-values
+  std::deque<real>e_kin_list; 
+  // list for e_pot-values
+  std::deque<real>e_pot_list; 
+  // sum of last e_kin-values
+  real e_kin_sum; 
+  // sum of last e_pot-values
+  real e_pot_sum; 
+  // mean value of e_kin
+  real mean_e_kin; 
+  // mean value of e_pot
+  real mean_e_pot; 
+  
+
 protected:
   /// The world we are observing
   World &W;
@@ -49,7 +70,7 @@ protected:
   std::ofstream statistics;
   /// coordiantes filestream
   std::ofstream coordinates;
-
+  
 private:
   /// Disabled Constructor
   Observer();

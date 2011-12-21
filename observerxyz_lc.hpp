@@ -1,6 +1,7 @@
 #ifndef _OBSERVERXYZ_LC_HPP
 #define _OBSERVERXYZ_LC_HPP
 
+#include <deque>
 #include "observer.hpp"
 #include "world_lc.hpp"
 

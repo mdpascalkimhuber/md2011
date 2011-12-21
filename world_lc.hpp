@@ -86,6 +86,8 @@ public:
   int therm_step_interval; 
   // random seed for velocity distribution
   unsigned random_seed; 
+  // temperature of the system
+  real temperature; 
 
 };
 

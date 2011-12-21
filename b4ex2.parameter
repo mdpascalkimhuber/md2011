@@ -1,6 +1,6 @@
 name b4ex2
 delta_t 0.001
-t_end 0
+t_end 15.000
 epsilon 120
 sigma 1
 cell_r_cut 2.5

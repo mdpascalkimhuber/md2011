@@ -2,7 +2,7 @@
 #include <iomanip>
 
 // constructor
-Observer::Observer(World &_W) : W(_W)
+Observer::Observer(World &_W) : W(_W), e_kin_sum(0.0), e_pot_sum(0.0), mean_e_kin(0.0), mean_e_pot(0.0)
 {
   // open statistics file
   std::string statistics_filename = W.name + ".statistics";
@@ -34,12 +34,17 @@ Observer::~Observer()
 
 void Observer::output_statistics()
 {
+  // compute mean values
+  comp_mean_value(); 
+
   // write statistics into the filestream, seperated with tabulars
   statistics
     << W.t << "\t"
     << W.e_pot << "\t"
     << W.e_kin << "\t"
     << W.e_tot << "\t"
+    << mean_e_pot << "\t"
+    << mean_e_kin << "\t"
     << std::endl;
 }
 
@@ -74,4 +79,43 @@ void Observer::notify()
   output_coordinates();
 }
 
-// vim:set et sts=4 ts=4 sw=4 ai ci cin:
+// calculate mean values of energy
+void Observer::comp_mean_value()
+{
+  // mean value for the first 100 steps
+  if (W.t < 100*W.delta_t)
+    {
+      // add new values to memory-lists
+      e_kin_list.push_front(W.e_kin); 
+      e_pot_list.push_front(W.e_pot);
+
+      // calculate sums
+      e_kin_sum += W.e_kin; 
+      e_pot_sum += W.e_pot; 
+      
+      // calculate mean values
+      mean_e_kin = (W.delta_t/W.t) * e_kin_sum; 
+      mean_e_pot = (W.delta_t/W.t) * e_pot_sum; 
+    }
+
+  // mean value after 100 steps
+  else 
+    {
+      // update memory-lists
+      e_kin_list.push_front(W.e_kin); 
+      e_pot_list.push_front(W.e_pot); 
+      
+      // calculate sums
+      e_kin_sum = e_kin_sum + e_kin_list.front() - e_kin_list.back(); 
+      e_pot_sum = e_pot_sum + e_pot_list.front() - e_pot_list.back(); 
+
+      // delete last elements in value-lists
+      e_kin_list.pop_back(); 
+      e_pot_list.pop_back(); 
+      
+      // calculate new mean values
+      mean_e_kin = 1.0/e_kin_list.size() * e_kin_sum; 
+      mean_e_pot = 1.0/e_pot_list.size() * e_pot_sum; 
+    }
+}
+

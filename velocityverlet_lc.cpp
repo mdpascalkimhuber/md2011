@@ -40,12 +40,12 @@ void VelocityVerlet_LC::timestep(real delta_t)
   std::cout << "Timestep: " <<  W_LC.t << std::endl; 
 
   // update coordinates of all particles
-  update_X(); 
+  update_X();
   // calculate all forces and E_pot on the fly
-  comp_F(); 
+  comp_F();
   
   // update velocities of all particles and calculate E_kin on the fly
-  update_V(); 
+  update_V();
 
   // calculate E_tot
   W_LC.e_tot = W_LC.e_kin + W_LC.e_pot; 
@@ -110,6 +110,45 @@ void VelocityVerlet_LC::update_V()
       update_V_in(*cell); 
       cell++; 
     }
+
+  // Thermostat if activated
+  if ((W_LC.therm_step_interval > 0) && ((int(W_LC.t/W_LC.delta_t) % W_LC.therm_step_interval) == 0) && fabs(W_LC.temperature - W_LC.therm_target_temp) > 0.1)
+    {
+      std::cout << "Temperature: " << W_LC.temperature; 
+      // helper variables and iterators
+      real beta = 0; 
+      std::vector<Cell>::iterator it_cell = W_LC.cells.begin(); 
+      std::list<Particle>::iterator it_p; 
+
+      // calculate current temperature
+      /* --------------------------------------------------------------------------------
+	 this calculations is only for this specific case!! (2D)
+	 --------------------------------------------------------------------------------*/
+      if (W_LC.particles_N != 1)
+	W_LC.temperature = 48.0/(W_LC.particles_N - 1) * W_LC.e_kin; 
+
+      // calculate coeffizient beta
+      if (W_LC.temperature != 0)
+	beta = sqrt(W_LC.therm_target_temp/W_LC.temperature); 
+      else // special case treatment
+	std::cout << "Temperature is zero. " << std::endl; 
+
+      // scale all velocities 
+      while (it_cell != W_LC.cells.end())
+	{
+	  // initialize particle-iterator
+	  it_p = it_cell->particles.begin(); 
+	  while (it_p != it_cell->particles.end())
+	    {
+	      for (unsigned dim = 0; dim < DIM; dim++)
+		{
+		  it_p->v[dim] *= beta; 
+		}
+	      it_p++; 
+	    }
+	  it_cell++; 
+	}
+    }
 }
 
 // update positions in all cells
@@ -132,11 +171,14 @@ void VelocityVerlet_LC::update_X()
       // compute global cell_index of new cell
       c_idx = W_LC.compute_cell_index(it_p->x); 
       
+      if (c_idx > W_LC.global_cell_N)
+	it_p++; 
+      else{
       // push particle in new cell
       W_LC.cells[c_idx].particles.push_back(*it_p); 
 
       // erase particle from particles-vector and increment iterator
-      it_p = W_LC.particles.erase(it_p); 
+      it_p = W_LC.particles.erase(it_p);}
     }
 }
 
